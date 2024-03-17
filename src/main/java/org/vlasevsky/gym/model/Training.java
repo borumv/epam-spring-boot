@@ -6,7 +6,6 @@ import java.util.Date;
 
 @Data
 public class Training extends BaseEntity{
-    private Long id;
     private String name;
     private Date date;
     private int duration;
