@@ -13,10 +13,8 @@ public class User extends BaseEntity {
     private String lastName;
     private String username;
     private String password;
-    //private boolean isActive;
     private static Set<String> existingUsernames = new HashSet<>();
 
-    // Method to generate username and password
     public void createProfile() {
         this.username = generateUsername(firstName, lastName);
         this.password = generateRandomPassword(10);
@@ -27,13 +25,11 @@ public class User extends BaseEntity {
         String finalUsername = baseUsername;
         int suffix = 1;
 
-        // Check if the username already exists and add a suffix if necessary
         while (existingUsernames.contains(finalUsername)) {
             finalUsername = baseUsername + suffix;
             suffix++;
         }
 
-        // Add the new username to the set of existing usernames
         existingUsernames.add(finalUsername);
 
         return finalUsername;

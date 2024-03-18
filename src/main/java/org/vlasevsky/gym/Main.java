@@ -7,9 +7,6 @@ import org.vlasevsky.gym.model.Trainee;
 import org.vlasevsky.gym.model.Trainer;
 import org.vlasevsky.gym.model.Training;
 import org.vlasevsky.gym.storage.Storage;
-import org.vlasevsky.gym.storage.TraineeStorage;
-import org.vlasevsky.gym.storage.TrainerStorage;
-import org.vlasevsky.gym.storage.TrainingStorage;
 
 public class Main {
     public static void main(String[] args) {
@@ -21,18 +18,24 @@ public class Main {
         }
         ctx.getApplicationName();
 
-        Storage<Trainee> traineeStorage = ctx.getBean(TraineeStorage.class);
-        Storage<Trainer> trainerStorage = ctx.getBean(TrainerStorage.class);
-        Storage<Training> trainingStorage = ctx.getBean(TrainingStorage.class);
+        Storage<Trainee> traineeStorage = ctx.getBean("traineeStorage", Storage.class);
+        Storage<Trainer> trainerStorage = ctx.getBean("trainerStorage", Storage.class);
+        Storage<Training> trainingStorage = ctx.getBean("trainingStorage", Storage.class);
 
         System.out.println("Trainees:");
-        traineeStorage.getAllData().values().forEach(System.out::println);
+        for (Trainee trainee : traineeStorage.findAll()) {
+            System.out.println(trainee);
+        }
 
         System.out.println("\nTrainers:");
-        trainerStorage.getAllData().values().forEach(System.out::println);
+        for (Trainer trainer : trainerStorage.findAll()) {
+            System.out.println(trainer);
+        }
 
         System.out.println("\nTrainings:");
-        trainingStorage.getAllData().values().forEach(System.out::println);
+        for (Training training : trainingStorage.findAll()) {
+            System.out.println(training);
+        }
 
     }
 }

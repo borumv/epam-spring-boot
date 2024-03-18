@@ -2,78 +2,52 @@ package org.vlasevsky.gym.dao;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.vlasevsky.gym.model.Trainer;
 import org.vlasevsky.gym.storage.Storage;
-import org.vlasevsky.gym.storage.TraineeStorage;
-import org.vlasevsky.gym.storage.TrainerStorage;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
 class TrainerDAOImplTest {
 
-    @Mock
-    private Storage<Trainer> mockStorage;
+    private Storage<Trainer> storage;
 
-    @InjectMocks
+
     private TrainerDAOImpl trainerDAO;
 
     @BeforeEach
     void setUp() {
-        mockStorage = mock(TrainerStorage.class);
+        storage = mock(Storage.class);
         trainerDAO = new TrainerDAOImpl();
-        trainerDAO.storage = mockStorage;
+        trainerDAO.storage = storage;
     }
+
     @Test
-    void findByIdShouldReturnTrainerWhenExists() {
-        // Given
+    void findByIdShouldReturnTrainer() {
         Trainer expectedTrainer = new Trainer();
         expectedTrainer.setId(1L);
-        when(mockStorage.getAllData()).thenReturn(Map.of(1L, expectedTrainer));
 
-        // When
-        Optional<Trainer> result = trainerDAO.findById(1L);
+        when(storage.findById(anyLong())).thenReturn(Optional.of(expectedTrainer));
 
-        // Then
-        assertTrue(result.isPresent());
-        assertEquals(expectedTrainer, result.get());
+        Optional<Trainer> actualTrainer = trainerDAO.findById(1L);
+
+        verify(storage, times(1)).findById(1L);
+        assert (actualTrainer.isPresent());
+        assert (actualTrainer.get().getId().equals(expectedTrainer.getId()));
     }
 
     @Test
-    void findByIdShouldReturnEmptyWhenNotExists() {
-        // Given
-        when(mockStorage.getAllData()).thenReturn(Map.of());
+    void saveShouldPersistTrainer() {
+        Trainer trainerToSave = new Trainer();
+        trainerToSave.setId(1L);
 
-        // When
-        Optional<Trainer> result = trainerDAO.findById(1L);
+        when(storage.save(any(Trainer.class))).thenReturn(trainerToSave);
 
-        // Then
-        assertFalse(result.isPresent());
+        Trainer savedTrainer = trainerDAO.save(trainerToSave);
+
+        verify(storage, times(1)).save(trainerToSave);
+        assert (savedTrainer.getId().equals(trainerToSave.getId()));
     }
-
-    @Test
-    void saveShouldAddTrainerWhenNew() {
-        // Given
-        Trainer newTrainer = new Trainer();
-        newTrainer.setFirstName("Boris");
-        when(mockStorage.getAllData()).thenReturn(new HashMap<>());
-
-        // When
-        Trainer savedTrainer = trainerDAO.save(newTrainer);
-
-        // Then
-        assertNotNull(savedTrainer.getId());
-        verify(mockStorage, times(2)).getAllData();
-    }
-
 
 }
