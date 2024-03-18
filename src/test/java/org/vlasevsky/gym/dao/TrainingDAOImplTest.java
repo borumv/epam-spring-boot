@@ -1,63 +1,54 @@
 package org.vlasevsky.gym.dao;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.vlasevsky.gym.exceptions.TrainingNotFoundException;
 import org.vlasevsky.gym.model.Training;
-import org.vlasevsky.gym.service.map.TrainingServiceMap;
+import org.vlasevsky.gym.storage.Storage;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
+
 class TrainingDAOImplTest {
 
-    @Mock
-    private TrainingDAO trainingDAO;
+    private Storage<Training> storage;
 
-    @InjectMocks
-    private TrainingServiceMap trainingServiceMap;
+    private TrainingDAOImpl trainingDAO;
+
+    @BeforeEach
+    void setUp() {
+        storage = mock(Storage.class);
+        trainingDAO = new TrainingDAOImpl();
+        trainingDAO.storage = storage;
+    }
 
     @Test
-    void testFindByIdSuccess() {
-        Long id = 1L;
+    void findByIdShouldReturnTraining() {
         Training expectedTraining = new Training();
-        expectedTraining.setId(id);
-        when(trainingDAO.findById(id)).thenReturn(Optional.of(expectedTraining));
+        expectedTraining.setId(1L);
 
-        Training actualTraining = trainingServiceMap.findById(id);
+        when(storage.findById(anyLong())).thenReturn(Optional.of(expectedTraining));
 
-        assertEquals(expectedTraining, actualTraining);
-        verify(trainingDAO).findById(id);
+        Optional<Training> actualTraining = trainingDAO.findById(1L);
+
+        verify(storage, times(1)).findById(1L);
+        assert (actualTraining.isPresent());
+        assert (actualTraining.get().getId().equals(expectedTraining.getId()));
     }
 
     @Test
-    void testFindByIdThrowsNotFoundException() {
-        Long nonExistentId = 1L;
-        when(trainingDAO.findById(nonExistentId)).thenReturn(Optional.empty());
-
-        assertThrows(TrainingNotFoundException.class, () -> {
-            trainingServiceMap.findById(nonExistentId);
-        });
-
-        verify(trainingDAO).findById(nonExistentId);
-    }
-
-    @Test
-    void testSave() {
+    void saveShouldPersistTraining() {
         Training trainingToSave = new Training();
         trainingToSave.setId(1L);
-        when(trainingDAO.save(trainingToSave)).thenReturn(trainingToSave);
 
-        Training savedTraining = trainingServiceMap.save(trainingToSave);
+        when(storage.save(any(Training.class))).thenReturn(trainingToSave);
 
-        assertEquals(trainingToSave, savedTraining);
-        verify(trainingDAO).save(trainingToSave);
+        Training savedTraining = trainingDAO.save(trainingToSave);
+
+        verify(storage, times(1)).save(trainingToSave);
+        assert (savedTraining.getId().equals(trainingToSave.getId()));
     }
+
 }

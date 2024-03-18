@@ -1,42 +1,23 @@
 package org.vlasevsky.gym.dao;
-
+import lombok.extern.slf4j.Slf4j;
 import org.vlasevsky.gym.model.BaseEntity;
 import org.vlasevsky.gym.storage.Storage;
-
-import java.util.Collections;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
+@Slf4j
 public abstract class BaseAbstractDAO<T extends BaseEntity> implements BaseDao<T> {
-
 
     Storage<T> storage;
 
     public Optional<T> findById(Long id) {
-        return Optional.ofNullable(storage.getAllData().get(id));
+        Optional<T> result = storage.findById(id);
+        log.info("findById called with id: {}, result: {}", id, result);
+        return result;
     }
 
     public T save(T entity) {
-        if (entity != null) {
-            if (entity.getId() == null) {
-                entity.setId(getNextId());
-            }
-            storage.getAllData().put(entity.getId(), entity);
-        } else {
-            System.out.println("Entity can't be null");
-        }
-
-        return entity;
+        T savedEntity = storage.save(entity);
+        log.info("Entity saved: {}", savedEntity);
+        return savedEntity;
     }
-
-    public Long getNextId() {
-        Long nextId = null;
-        try {
-            nextId = Collections.max(storage.getAllData().keySet()) + 1L;
-        } catch (NoSuchElementException e) {
-            nextId = 1L;
-        }
-        return nextId;
-    }
-
 }
