@@ -1,33 +1,32 @@
 package org.vlasevsky.gym.config;
 
+import org.hibernate.SessionFactory;
+import org.hibernate.boot.MetadataSources;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.vlasevsky.gym.model.Trainee;
-import org.vlasevsky.gym.model.Trainer;
-import org.vlasevsky.gym.model.Training;
-import org.vlasevsky.gym.storage.Storage;
-import org.vlasevsky.gym.storage.StorageImpl;
+import org.vlasevsky.gym.model.*;
 
 @Configuration
-@PropertySource("classpath:application.properties")
+@PropertySource("classpath:hibernate.properties")
 @ComponentScan(basePackages = "org.vlasevsky")
 public class ApplicationConfiguration {
 
-    @Bean
-    public Storage<Trainee> traineeStorage() {
-        return new StorageImpl<>(Trainee.class);
-    }
 
     @Bean
-    public Storage<Trainer> trainerStorage() {
-        return new StorageImpl<>(Trainer.class);
-    }
+    public SessionFactory sessionFactory() {
 
-    @Bean
-    public Storage<Training> trainingStorage() {
-        return new StorageImpl<>(Training.class);
+        return new MetadataSources(
+                new StandardServiceRegistryBuilder()
+                        .build())
+                .addAnnotatedClass(User.class)
+                .addAnnotatedClass(Trainer.class)
+                .addAnnotatedClass(TrainingType.class)
+                .addAnnotatedClass(Trainee.class)
+                .addAnnotatedClass(Training.class)
+                .buildMetadata()
+                .buildSessionFactory();
     }
-
 }

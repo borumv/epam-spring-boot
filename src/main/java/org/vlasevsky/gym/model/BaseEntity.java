@@ -1,23 +1,14 @@
 package org.vlasevsky.gym.model;
 
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.io.Serializable;
 
-@Data
-public abstract class BaseEntity implements Serializable {
+public interface BaseEntity <T extends Serializable> {
 
-    Long id;
+    void setId(T id);
 
-    public Long getId() {
-        return id;
-    }
+    T getId();
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public boolean isNew() {
-        return this.id == null;
-    }
 }
