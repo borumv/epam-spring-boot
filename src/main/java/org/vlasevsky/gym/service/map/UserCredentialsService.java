@@ -1,7 +1,9 @@
 package org.vlasevsky.gym.service.map;
 
+
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.vlasevsky.gym.dao.UserRepository;
 import org.vlasevsky.gym.dto.CredentialsDto;
 import org.vlasevsky.gym.exceptions.UserNotFoundException;
@@ -15,6 +17,7 @@ public class UserCredentialsService {
 
     private final UserRepository userRepository;
 
+    @Transactional
     public String generateUsername(String firstName, String lastName) {
         String baseUsername = firstName + "." + lastName;
         String username = baseUsername;
@@ -41,7 +44,7 @@ public class UserCredentialsService {
         return password.toString();
     }
 
-
+    @Transactional
     public void changePassword(Long userId, String newPassword) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId.toString()));
@@ -50,7 +53,7 @@ public class UserCredentialsService {
     }
 
     public boolean checkCredentials(CredentialsDto credentialsDto){
-        return !userRepository.checkCredentials(credentialsDto.getUsername(), credentialsDto.getPassword());
+        return userRepository.checkCredentials(credentialsDto.getUsername(), credentialsDto.getPassword());
     }
 
 }

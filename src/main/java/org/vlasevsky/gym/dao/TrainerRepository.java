@@ -22,16 +22,14 @@ public class TrainerRepository extends BaseAbstractDAO<Long, Trainer>{
 
 
     public Optional<Trainer> findByUsername(String username) {
-        @Cleanup Session session = sessionFactory.openSession();
-        return session.createQuery("SELECT t FROM Trainer t WHERE t.username = :username", Trainer.class)
+        return getCurrentSession().createQuery("SELECT t FROM Trainer t WHERE t.username = :username", Trainer.class)
                 .setParameter("username", username)
                 .uniqueResultOptional();
     }
 
     public List<Training> findTrainerTrainingsByUsernameAndCriteria(
             String username, Date fromDate, Date toDate, String traineeName) {
-        @Cleanup Session session = sessionFactory.openSession();
-        return session.createQuery(
+        return getCurrentSession().createQuery(
                         "SELECT t FROM Training t JOIN t.trainer tr JOIN t.trainee trn WHERE tr.username = :username " +
                                 "AND t.date BETWEEN :fromDate AND :toDate AND trn.firstName LIKE :traineeName", Training.class)
                 .setParameter("username", username)
@@ -42,8 +40,7 @@ public class TrainerRepository extends BaseAbstractDAO<Long, Trainer>{
     }
 
     public List<Trainer> findTrainersNotAssignedToTrainee(String traineeUsername) {
-        @Cleanup Session session = sessionFactory.openSession();
-        return session.createQuery(
+        return getCurrentSession().createQuery(
                         "SELECT t FROM Trainer t WHERE t NOT IN " +
                                 "(SELECT tr.trainers FROM Trainee tr WHERE tr.username = :traineeUsername)", Trainer.class)
                 .setParameter("traineeUsername", traineeUsername)

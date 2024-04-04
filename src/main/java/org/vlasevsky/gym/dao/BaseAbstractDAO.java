@@ -8,6 +8,8 @@ import org.hibernate.SessionFactory;
 import org.hibernate.query.criteria.HibernateCriteriaBuilder;
 import org.hibernate.query.criteria.JpaCriteriaQuery;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import org.vlasevsky.gym.model.BaseEntity;
 import org.vlasevsky.gym.model.Trainee;
 
@@ -15,72 +17,52 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
-@Slf4j
+@Repository
 @RequiredArgsConstructor
 public abstract class BaseAbstractDAO<K extends Serializable, T extends BaseEntity> implements BaseDao<K, T> {
 
     private final Class<T> clazz;
 
     @Autowired
-    SessionFactory sessionFactory;
+    private SessionFactory sessionFactory;
 
-    @Override
-    public Optional<T> findById(K  id) {
-        @Cleanup Session session = sessionFactory.openSession();
-        return Optional.ofNullable(session.find(clazz, id));
-
+    protected Session getCurrentSession() {
+        return sessionFactory.getCurrentSession();
     }
 
+    @Override
+    public Optional<T> findById(K id) {
+        return Optional.ofNullable(getCurrentSession().find(clazz, id));
+    }
 
     @Override
     public T save(T entity) {
-        @Cleanup Session session = sessionFactory.openSession();
-        session.beginTransaction();
-        if(entity.getId() != null)
+        if (entity.getId() != null) {
             update(entity);
-        else {
-            session.persist(entity);
-            session.flush();
-
+        } else {
+            getCurrentSession().persist(entity);
         }
-        session.getTransaction().commit();
-
         return entity;
     }
 
     @Override
     public void delete(K id) {
-        @Cleanup Session session = sessionFactory.openSession();
-        session.beginTransaction();
-        T entity = session.find(clazz, id);
+        T entity = getCurrentSession().find(clazz, id);
         if (entity != null) {
-            session.remove(entity);
-            session.getTransaction().commit();
+            getCurrentSession().remove(entity);
         } else {
-            session.getTransaction().rollback();
             throw new IllegalArgumentException("Entity with id " + id + " not found");
         }
     }
 
     @Override
     public void update(T entity) {
-        @Cleanup Session session = sessionFactory.openSession();
-        session.beginTransaction();
-        session.merge(entity);
-        session.flush();
-        session.getTransaction().commit();
+        getCurrentSession().merge(entity);
     }
 
     @Override
     public List<T> findAll() {
-
-        @Cleanup Session session = sessionFactory.openSession();
-        HibernateCriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-        JpaCriteriaQuery<T> query = criteriaBuilder.createQuery(clazz);
-        query.from(clazz);
-
-        return session.createQuery(query)
-                .getResultList();
-
+        return getCurrentSession().createQuery("from " + clazz.getName(), clazz).getResultList();
     }
 }
+

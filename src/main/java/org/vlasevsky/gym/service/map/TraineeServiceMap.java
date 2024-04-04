@@ -3,13 +3,17 @@ package org.vlasevsky.gym.service.map;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import org.springframework.transaction.annotation.Transactional;
 import org.vlasevsky.gym.dao.TraineeRepository;
 import org.vlasevsky.gym.dao.TrainerRepository;
 import org.vlasevsky.gym.dto.*;
 import org.vlasevsky.gym.exceptions.AuthenticationException;
 import org.vlasevsky.gym.exceptions.TraineeNotFoundException;
 import org.vlasevsky.gym.exceptions.UserNotFoundException;
-import org.vlasevsky.gym.mapper.*;
+import org.vlasevsky.gym.mapper.mapstruct.TraineeMapper;
+import org.vlasevsky.gym.mapper.mapstruct.TrainerMapper;
+import org.vlasevsky.gym.mapper.mapstruct.TrainingMapper;
 import org.vlasevsky.gym.model.Trainee;
 import org.vlasevsky.gym.model.Trainer;
 import org.vlasevsky.gym.model.Training;
@@ -19,38 +23,30 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @AllArgsConstructor
 public class TraineeServiceMap implements TraineeService {
 
-
-    private final TrainingReadMapper trainingReadMapper;
-    private final TraineeCreateMapper traineeCreateMapper;
-    private final TraineeReadMapper traineeReadMapper;
-    private final TrainerReadMapper trainerReadMapper;
     private final TraineeRepository traineeRepository;
     private final TrainerRepository trainerRepository;
     private final UserCredentialsService userCredentialsService;
+    private final TraineeMapper traineeMapper;
+    private final TrainingMapper trainingMapper;
+    private final TrainerMapper trainerMapper;
 
 
-
-    public <T> Optional<T> findById(Long id, Mapper<Trainee, T> mapper, CredentialsDto credentialsDto) {
-        if (userCredentialsService.checkCredentials(credentialsDto)) {
-            throw new AuthenticationException("Invalid credentials");
-        }
-        return traineeRepository.findById(id)
-                .map(mapper::mapFrom);
-    }
     public TraineeReadDto findById(Long id, CredentialsDto credentialsDto) {
 
         log.info("Finding trainee by ID: {}", id);
-        return findById(id, traineeReadMapper, credentialsDto).orElseThrow(() -> new TraineeNotFoundException(id));
+        Trainee trainee = traineeRepository.findById(id)
+                .orElseThrow(() -> new TraineeNotFoundException(id));
+        return traineeMapper.toDto(trainee);
     }
 
 
+    @Transactional
     public void delete(Trainee trainee, CredentialsDto credentialsDto) {
         if (userCredentialsService.checkCredentials(credentialsDto)) {
             throw new AuthenticationException("Invalid credentials");
@@ -59,9 +55,9 @@ public class TraineeServiceMap implements TraineeService {
         traineeRepository.delete(trainee.getId());
     }
 
-
+    @Transactional
     public CredentialsDto create(TraineeCreateAndUpdateDto trainee) {
-        Trainee traineeEntity = traineeCreateMapper.mapFrom(trainee);
+        Trainee traineeEntity = traineeMapper.toEntity(trainee);
         String username = userCredentialsService.generateUsername(trainee.firstName(), trainee.lastName());
         String password = userCredentialsService.generateRandomPassword();
         traineeEntity.setUsername(username);
@@ -70,25 +66,21 @@ public class TraineeServiceMap implements TraineeService {
 
         return new CredentialsDto(username, password);
     }
-
+    @Transactional
     public void changeTraineePassword(Long traineeId, String newPassword, CredentialsDto credentialsDto) {
         if (userCredentialsService.checkCredentials(credentialsDto)) {
             throw new AuthenticationException("Invalid credentials");
         }
         userCredentialsService.changePassword(traineeId, newPassword);
     }
-
+    @Transactional
     public TraineeReadDto findTraineeByUsername(String username, CredentialsDto credentialsDto) {
-        if (userCredentialsService.checkCredentials(credentialsDto)) {
-            throw new AuthenticationException("Invalid credentials");
-        }
         log.info("Finding trainee by username: {}", username);
-        return traineeRepository.findByUsername(username)
-                .map(traineeReadMapper::mapFrom)
+        Trainee trainee = traineeRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException(username));
+        return traineeMapper.toDto(trainee);
     }
-
-
+    @Transactional
     public void activateTrainee(Long id, CredentialsDto credentialsDto) {
         if (userCredentialsService.checkCredentials(credentialsDto)) {
             throw new AuthenticationException("Invalid credentials");
@@ -100,7 +92,7 @@ public class TraineeServiceMap implements TraineeService {
             traineeRepository.update(trainee);
         }
     }
-
+    @Transactional
     public void deactivateTrainee(Long id, CredentialsDto credentialsDto) {
         if (userCredentialsService.checkCredentials(credentialsDto)) {
             throw new AuthenticationException("Invalid credentials");
@@ -112,7 +104,7 @@ public class TraineeServiceMap implements TraineeService {
             traineeRepository.update(trainee);
         }
     }
-
+    @Transactional
     public void deleteTraineeByUsername(String username, CredentialsDto credentialsDto) {
         if (userCredentialsService.checkCredentials(credentialsDto)) {
             throw new AuthenticationException("Invalid credentials");
@@ -126,17 +118,15 @@ public class TraineeServiceMap implements TraineeService {
             throw new UserNotFoundException(username);
         }
     }
-
+    @Transactional
     public List<TrainingReadDto> getTraineeTrainings(String username, Date fromDate, Date toDate, String trainerName, String trainingType, CredentialsDto credentialsDto) {
         if (userCredentialsService.checkCredentials(credentialsDto)) {
             throw new AuthenticationException("Invalid credentials");
         }
         List<Training> trainings = traineeRepository.findTraineeTrainingsByUsernameAndCriteria(username, fromDate, toDate, trainerName, trainingType);
-        return trainings.stream()
-                .map(trainingReadMapper::mapFrom)
-                .collect(Collectors.toList());
+        return trainingMapper.toDTOList(trainings);
     }
-
+    @Transactional
     public void updateTraineeTrainers(Long traineeId, Set<Trainer> trainers, CredentialsDto credentialsDto) {
         if (userCredentialsService.checkCredentials(credentialsDto)) {
             throw new AuthenticationException("Invalid credentials");
@@ -146,14 +136,12 @@ public class TraineeServiceMap implements TraineeService {
         trainee.setTrainers(trainers);
         traineeRepository.update(trainee);
     }
-
+    @Transactional
     public List<TrainerReadDto> getTrainersNotAssignedToTrainee(String traineeUsername, CredentialsDto credentialsDto) {
         if (userCredentialsService.checkCredentials(credentialsDto)) {
             throw new AuthenticationException("Invalid credentials");
         }
         List<Trainer> trainers = trainerRepository.findTrainersNotAssignedToTrainee(traineeUsername);
-        return trainers.stream()
-                .map(trainerReadMapper::mapFrom)
-                .collect(Collectors.toList());
+        return trainerMapper.toDTOList(trainers);
     }
 }
