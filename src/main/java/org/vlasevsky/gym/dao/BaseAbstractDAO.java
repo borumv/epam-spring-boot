@@ -1,17 +1,11 @@
 package org.vlasevsky.gym.dao;
 
-import lombok.Cleanup;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.query.criteria.HibernateCriteriaBuilder;
-import org.hibernate.query.criteria.JpaCriteriaQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import org.vlasevsky.gym.model.BaseEntity;
-import org.vlasevsky.gym.model.Trainee;
 
 import java.io.Serializable;
 import java.util.List;

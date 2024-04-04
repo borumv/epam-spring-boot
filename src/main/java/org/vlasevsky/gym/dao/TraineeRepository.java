@@ -23,7 +23,6 @@ public class TraineeRepository extends BaseAbstractDAO<Long, Trainee> {
                 .setParameter("username", username)
                 .uniqueResultOptional();
     }
-
     public List<Training> findTraineeTrainingsByUsernameAndCriteria(
             String username, Date fromDate, Date toDate, String trainerName, String trainingType) {
         return getCurrentSession().createQuery(

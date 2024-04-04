@@ -19,14 +19,11 @@ public class TrainerRepository extends BaseAbstractDAO<Long, Trainer>{
     public TrainerRepository() {
         super(Trainer.class);
     }
-
-
     public Optional<Trainer> findByUsername(String username) {
         return getCurrentSession().createQuery("SELECT t FROM Trainer t WHERE t.username = :username", Trainer.class)
                 .setParameter("username", username)
                 .uniqueResultOptional();
     }
-
     public List<Training> findTrainerTrainingsByUsernameAndCriteria(
             String username, Date fromDate, Date toDate, String traineeName) {
         return getCurrentSession().createQuery(
@@ -38,7 +35,6 @@ public class TrainerRepository extends BaseAbstractDAO<Long, Trainer>{
                 .setParameter("traineeName", "%" + traineeName + "%")
                 .getResultList();
     }
-
     public List<Trainer> findTrainersNotAssignedToTrainee(String traineeUsername) {
         return getCurrentSession().createQuery(
                         "SELECT t FROM Trainer t WHERE t NOT IN " +
