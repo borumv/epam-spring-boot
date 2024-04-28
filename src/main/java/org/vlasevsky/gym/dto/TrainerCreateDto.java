@@ -1,6 +1,19 @@
 package org.vlasevsky.gym.dto;
 
-public record TrainerCreateDto (String firstName,
-                                String lastName,
-                                Boolean isActive){
+import jakarta.validation.constraints.NotBlank;
+import org.vlasevsky.gym.model.TrainingType;
+
+import java.util.List;
+
+public record TrainerCreateDto(
+        @NotBlank(message = "Username must not be blank")
+        String username,
+
+        @NotBlank(message = "First name must not be blank")
+        String firstName,
+
+        @NotBlank(message = "Last name must not be blank")
+        String lastName,
+        List<TrainingType.Type> specializations,
+        Boolean isActive) {
 }

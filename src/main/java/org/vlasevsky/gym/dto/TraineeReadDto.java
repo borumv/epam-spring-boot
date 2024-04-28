@@ -1,7 +1,8 @@
 package org.vlasevsky.gym.dto;
 
 public record TraineeReadDto(
-        Long id,
-        String name
+        String username,
+        String firstName,
+        String lastName
 ) {
 }

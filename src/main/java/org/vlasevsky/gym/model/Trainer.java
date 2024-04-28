@@ -4,22 +4,23 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
 
+import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "trainer")
+@Table(name = "trainers")
 @Data
 @PrimaryKeyJoinColumn(name = "id")
 
 public class Trainer extends User {
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "trainer_training_type",
             joinColumns = @JoinColumn(name = "trainer_id"),
             inverseJoinColumns = @JoinColumn(name = "training_type_id")
     )
-    private Set<TrainingType> specializations;
+    private List<TrainingType> specializations;
 
     @ManyToMany
     @JoinTable(

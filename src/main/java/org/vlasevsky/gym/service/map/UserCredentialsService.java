@@ -6,14 +6,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.vlasevsky.gym.dao.UserRepository;
 import org.vlasevsky.gym.dto.CredentialsDto;
+import org.vlasevsky.gym.exceptions.AuthenticationException;
 import org.vlasevsky.gym.exceptions.UserNotFoundException;
 import org.vlasevsky.gym.model.User;
+import org.vlasevsky.gym.service.UserService;
 
 import java.util.Random;
 
 @Service
 @AllArgsConstructor
-public class UserCredentialsService {
+public class UserCredentialsService implements UserService {
 
     private final UserRepository userRepository;
 
@@ -45,6 +47,7 @@ public class UserCredentialsService {
     }
 
     @Transactional
+
     public void changePassword(Long userId, String newPassword) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId.toString()));
@@ -52,8 +55,24 @@ public class UserCredentialsService {
         userRepository.save(user);
     }
 
-    public boolean checkCredentials(CredentialsDto credentialsDto){
-        return userRepository.checkCredentials(credentialsDto.getUsername(), credentialsDto.getPassword());
+    public boolean checkCredentials(CredentialsDto credentialsDto) {
+        return userRepository.login(credentialsDto);
     }
 
+    @Override
+    @Transactional
+    public boolean login(CredentialsDto credentialsDto) {
+        return userRepository.login(credentialsDto);
+    }
+
+    @Override
+    @Transactional
+    public boolean changePassword(CredentialsDto credentialsDto, String newPassword) {
+        if (checkCredentials(credentialsDto)) {
+            User user = userRepository.findByUsername(credentialsDto.username())
+                    .orElseThrow(() -> new AuthenticationException("Incorrect credentials"));
+            user.setPassword(newPassword);
+            return true;
+        } else return false;
+    }
 }
