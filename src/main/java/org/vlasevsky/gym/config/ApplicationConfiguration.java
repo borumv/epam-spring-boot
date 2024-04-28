@@ -1,5 +1,6 @@
 package org.vlasevsky.gym.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -12,11 +13,13 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
+import java.util.Properties;
 
 @Configuration
-@PropertySource("classpath:hibernate.properties")
-@ComponentScan(basePackages = "org.vlasevsky")
+@PropertySource("classpath:/application.properties")
+@ComponentScan(basePackages = "org.vlasevsky.gym")
 @EnableTransactionManagement
+@Slf4j
 public class ApplicationConfiguration {
 
     @Value("${hibernate.connection.driver_class}")
@@ -43,10 +46,14 @@ public class ApplicationConfiguration {
 
     @Bean
     public LocalSessionFactoryBean sessionFactory(DataSource dataSource) {
-        LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
-        sessionFactoryBean.setDataSource(dataSource);
-        sessionFactoryBean.setPackagesToScan("org.vlasevsky.gym.model");
-        return sessionFactoryBean;
+        LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
+        sessionFactory.setDataSource(dataSource());
+        sessionFactory.setPackagesToScan("org.vlasevsky.gym.model");
+        Properties hibernateProperties = new Properties();
+        hibernateProperties.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
+        hibernateProperties.setProperty("hibernate.show_sql", "true");
+        sessionFactory.setHibernateProperties(hibernateProperties);
+        return sessionFactory;
     }
 
 
@@ -56,4 +63,6 @@ public class ApplicationConfiguration {
         transactionManager.setSessionFactory(sessionFactory);
         return transactionManager;
     }
+
+
 }

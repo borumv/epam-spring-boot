@@ -14,9 +14,7 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 public abstract class BaseAbstractDAO<K extends Serializable, T extends BaseEntity> implements BaseDao<K, T> {
-
     private final Class<T> clazz;
-
     @Autowired
     private SessionFactory sessionFactory;
 

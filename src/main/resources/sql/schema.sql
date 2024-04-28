@@ -1,3 +1,11 @@
+DROP TABLE IF EXISTS training CASCADE;
+DROP TABLE IF EXISTS trainers CASCADE;
+DROP TABLE IF EXISTS trainees CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS training_types CASCADE;
+DROP TABLE IF EXISTS trainee_trainer CASCADE;
+DROP TABLE IF EXISTS trainer_training_type CASCADE;
+
 CREATE TABLE users (
                        id SERIAL PRIMARY KEY,
                        first_name VARCHAR(255),
@@ -8,45 +16,47 @@ CREATE TABLE users (
 );
 
 CREATE TABLE trainees (
-                          id INT PRIMARY KEY REFERENCES users(id),
+                          id BIGINT PRIMARY KEY,
                           date_of_birth DATE,
-                          address VARCHAR(255)
+                          address VARCHAR(255),
+                          FOREIGN KEY (id) REFERENCES users(id)
 );
 
 CREATE TABLE trainers (
-                          id INT PRIMARY KEY REFERENCES users(id),
-                          specialization VARCHAR(255)
+                          id BIGINT PRIMARY KEY,
+                          FOREIGN KEY (id) REFERENCES users(id)
 );
 
 CREATE TABLE training_types (
                                 id SERIAL PRIMARY KEY,
-                                name VARCHAR(255) UNIQUE
+                                name VARCHAR(255)
 );
 
-CREATE TABLE trainings (
-                           id SERIAL PRIMARY KEY,
-                           name VARCHAR(255),
-                           date DATE,
-                           duration INT,
-                           trainee_id INTEGER REFERENCES trainees(id),
-                           trainer_id INTEGER REFERENCES trainers(id),
-                           training_type_id INTEGER REFERENCES training_types(id)
-);
-
-CREATE TABLE trainee_trainer (
-                                 trainee_id INTEGER REFERENCES trainees(id),
-                                 trainer_id INTEGER REFERENCES trainers(id),
-                                 PRIMARY KEY (trainee_id, trainer_id)
-);
-
-CREATE TABLE trainer_specializations (
-                                         trainer_id INTEGER REFERENCES trainers(id),
-                                         training_type_id INTEGER REFERENCES training_types(id),
-                                         PRIMARY KEY (trainer_id, training_type_id)
+CREATE TABLE training (
+                          id SERIAL PRIMARY KEY,
+                          name VARCHAR(255),
+                          date DATE,
+                          duration INT,
+                          trainee_id BIGINT,
+                          trainer_id BIGINT,
+                          training_type_id INT,
+                          FOREIGN KEY (trainee_id) REFERENCES trainees(id),
+                          FOREIGN KEY (trainer_id) REFERENCES trainers(id),
+                          FOREIGN KEY (training_type_id) REFERENCES training_types(id)
 );
 
 CREATE TABLE trainee_trainer (
-                                 trainee_id INTEGER REFERENCES trainees(id),
-                                 trainer_id INTEGER REFERENCES trainers(id),
-                                 PRIMARY KEY (trainee_id, trainer_id)
+                                 trainee_id BIGINT,
+                                 trainer_id BIGINT,
+                                 PRIMARY KEY (trainee_id, trainer_id),
+                                 FOREIGN KEY (trainee_id) REFERENCES trainees(id),
+                                 FOREIGN KEY (trainer_id) REFERENCES trainers(id)
+);
+
+CREATE TABLE trainer_training_type (
+                                       trainer_id BIGINT,
+                                       training_type_id INT,
+                                       PRIMARY KEY (trainer_id, training_type_id),
+                                       FOREIGN KEY (trainer_id) REFERENCES trainers(id),
+                                       FOREIGN KEY (training_type_id) REFERENCES training_types(id)
 );

@@ -1,25 +1,32 @@
 package org.vlasevsky.gym;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.apache.catalina.Context;
+import org.apache.catalina.startup.Tomcat;
+import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
+import org.springframework.web.servlet.DispatcherServlet;
 import org.vlasevsky.gym.config.ApplicationConfiguration;
-import org.vlasevsky.gym.dto.CredentialsDto;
-import org.vlasevsky.gym.dto.TraineeCreateAndUpdateDto;
-import org.vlasevsky.gym.dto.TrainerCreateDto;
-import org.vlasevsky.gym.service.map.TraineeServiceMap;
-import org.vlasevsky.gym.service.map.TrainerServiceMap;
 
-import java.util.Date;
+import java.io.File;
 
 @Slf4j
 public class Main {
-    public static void main(String[] args) {
-        ApplicationContext ctx = new AnnotationConfigApplicationContext(ApplicationConfiguration.class);
-        String[] beans = ctx.getBeanDefinitionNames();
-        for (String bean : beans) {
-            log.info("Bean Name: " + bean);
-        }
+    public static void main(String[] args) throws Exception {
+        log.info("Starting Tomcat server...");
+        Tomcat tomcat = new Tomcat();
 
+        tomcat.setPort(Integer.parseInt(System.getProperty("server.port", "8081")));
+        Context context = tomcat.addWebapp("", new File("src/main/").getAbsolutePath());
+        tomcat.getConnector();
+
+        AnnotationConfigWebApplicationContext appContext = new AnnotationConfigWebApplicationContext();
+        appContext.register(ApplicationConfiguration.class);
+
+        DispatcherServlet dispatcherServlet = new DispatcherServlet(appContext);
+        Tomcat.addServlet(context, "dispatcherServlet", dispatcherServlet).setLoadOnStartup(1);
+        context.addServletMappingDecoded("/*", "dispatcherServlet");
+
+        tomcat.start();
+        tomcat.getServer().await();
     }
 }

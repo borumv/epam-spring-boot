@@ -2,6 +2,7 @@ package org.vlasevsky.gym.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.Date;
 
@@ -21,11 +22,14 @@ public class Training implements BaseEntity<Long>{
     private int duration;
     @ManyToOne
     @JoinColumn(name = "trainee_id")
+    @ToString.Exclude
     private Trainee trainee;
     @ManyToOne
     @JoinColumn(name = "trainer_id")
+    @ToString.Exclude
     private Trainer trainer;
     @Enumerated(EnumType.STRING)
-    @Column(name = "training_type")
-    private TrainingType.Type trainingType;
+    @ManyToOne
+    @JoinColumn(name = "training_type_id")
+    private TrainingType trainingType;
 }

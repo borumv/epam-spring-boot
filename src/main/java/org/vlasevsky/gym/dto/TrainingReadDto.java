@@ -1,11 +1,11 @@
 package org.vlasevsky.gym.dto;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public record TrainingReadDto(
         Long id,
         String name,
-        Date date,
+        LocalDate date,
         int duration,
         TraineeReadDto trainee,
         TrainerReadDto trainer
