@@ -10,7 +10,7 @@ import org.vlasevsky.gym.dto.TrainingCreateDto;
 import org.vlasevsky.gym.service.TrainingService;
 
 @RestController
-@RequestMapping("/api/trainings")
+@RequestMapping("/trainings")
 @AllArgsConstructor
 public class TrainingController {
 

@@ -2,6 +2,8 @@ package org.vlasevsky.gym.config;
 
 
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.servers.Server;
 import lombok.AllArgsConstructor;
 import org.springdoc.core.configuration.SpringDocConfiguration;
 import org.springdoc.core.configuration.SpringDocDataRestConfiguration;
@@ -18,6 +20,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.vlasevsky.gym.interceptor.LoggingInterceptor;
 
@@ -40,7 +43,9 @@ public class OpenApiConfig implements WebMvcConfigurer {
 
     @Bean
     public OpenAPI openAPI() {
-        return new OpenAPI();
+        return new OpenAPI()
+                .info(new Info().title("API Documentation").description("Gym for EPAM API"));
+                //.addServersItem(new Server().url("/api"));
     }
 
 
@@ -52,6 +57,7 @@ public class OpenApiConfig implements WebMvcConfigurer {
                 .pathsToMatch("/api/**")
                 .build();
     }
+
 
     @Bean
     public SwaggerUiConfigProperties swaggerUiConfigProperties() {
@@ -66,6 +72,9 @@ public class OpenApiConfig implements WebMvcConfigurer {
         registry.addInterceptor(loggingInterceptor);
     }
 
-
+    @Override
+    public void configurePathMatch(PathMatchConfigurer configurer) {
+        configurer.addPathPrefix("/api", c -> true);
+    }
 }
 

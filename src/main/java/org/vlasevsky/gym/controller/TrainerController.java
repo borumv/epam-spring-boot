@@ -14,21 +14,28 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/trainers")
+@RequestMapping("/trainers")
 @AllArgsConstructor
 public class TrainerController {
 
     @Autowired
     private TrainerService trainerService;
 
+    @GetMapping
+    public List<TrainerReadDto> getTrainers(@RequestParam(required = false) String unassignedTraineeUsername) {
+        if (unassignedTraineeUsername != null) {
+            return trainerService.getTrainersNotAssignedToTrainee(unassignedTraineeUsername);
+        }
+        return trainerService.findAll();
+    }
     @PostMapping("/register")
     public ResponseEntity<CredentialsDto> registerTrainee(@RequestBody TrainerRegistrationDto registrationDto) {
         CredentialsDto credentials = trainerService.register(registrationDto);
         return new ResponseEntity<>(credentials, HttpStatus.CREATED);
     }
 
-    @GetMapping("/profile")
-    public ResponseEntity<TrainerProfileReadDto> getTrainerProfile(@RequestParam String username) {
+    @GetMapping("/{username}")
+    public ResponseEntity<TrainerProfileReadDto> getTrainerProfile(@PathVariable String username) {
         TrainerProfileReadDto profile = trainerService.findTrainerByUsername(username);
         if (profile != null) {
             return new ResponseEntity<>(profile, HttpStatus.OK);
@@ -37,15 +44,15 @@ public class TrainerController {
         }
     }
 
-    @PutMapping("/profile")
-    public ResponseEntity<TrainerProfileReadDto> updateTrainerProfile(@RequestBody TrainerCreateDto dto) {
-        TrainerProfileReadDto updatedProfile = trainerService.update(dto);
+    @PutMapping("/{username}")
+    public ResponseEntity<TrainerProfileReadDto> updateTrainerProfile(@PathVariable String username, @RequestBody TrainerCreateDto dto) {
+        TrainerProfileReadDto updatedProfile = trainerService.update(username, dto);
         return new ResponseEntity<>(updatedProfile, HttpStatus.OK);
     }
 
-    @PatchMapping("/activate")
-    public ResponseEntity<Void> changeTrainerActiveStatus(@RequestParam String username, @RequestParam boolean isActive) {
-        trainerService.changeActiveStatus(username, isActive);
+    @PatchMapping("/{username}")
+    public ResponseEntity<Void> changeTrainerActiveStatus(@PathVariable String username, @RequestBody StatusUpdateDto dto) {
+        trainerService.changeActiveStatus(username, dto);
         return ResponseEntity.ok().build();
     }
 
@@ -58,6 +65,7 @@ public class TrainerController {
         List<TrainingReadDto> trainings = trainerService.getTrainerTrainings(username, from, to, traineeName);
         return ResponseEntity.ok(trainings);
     }
+
 
 
 }

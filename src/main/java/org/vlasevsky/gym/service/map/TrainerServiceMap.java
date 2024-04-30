@@ -71,10 +71,10 @@ public class TrainerServiceMap implements TrainerService {
 
     @Transactional
     @Override
-    public TrainerProfileReadDto update(TrainerCreateDto dto) {
+    public TrainerProfileReadDto update(String username, TrainerCreateDto dto) {
 
-        Trainer trainer = trainerRepository.findByUsername(dto.username())
-                .orElseThrow(() -> new TrainerNotFoundException("Trainer not found with username: " + dto.username()));
+        Trainer trainer = trainerRepository.findByUsername(username)
+                .orElseThrow(() -> new TrainerNotFoundException("Trainer not found with username: " + username));
 
         trainer.setFirstName(dto.firstName());
         trainer.setLastName(dto.lastName());
@@ -85,15 +85,22 @@ public class TrainerServiceMap implements TrainerService {
         trainerRepository.save(trainer);
 
 
-        return findTrainerByUsername(dto.username());
+        return findTrainerByUsername(username);
     }
 
     @Transactional
     @Override
-    public void changeActiveStatus(String username, boolean isActive) {
+    public List<TrainerReadDto> findAll() {
+        List<Trainer> trainers = trainerRepository.findAll();
+        return trainerMapper.toDTOList(trainers);
+    }
+
+    @Transactional
+    @Override
+    public void changeActiveStatus(String username, StatusUpdateDto dto) {
         Trainer trainer = trainerRepository.findByUsername(username)
                 .orElseThrow(() -> new TrainerNotFoundException(username));
-        trainer.setIsActive(isActive);
+        trainer.setIsActive(dto.isActive());
         trainerRepository.save(trainer);
     }
 
@@ -103,6 +110,13 @@ public class TrainerServiceMap implements TrainerService {
         List<Training> trainings = trainingRepository.findTrainingsByTrainerAndPeriodAndTrainee(trainerUsername, fromDate, toDate, traineeName);
         log.info("Trainings found: {}", trainings);
         return trainingMapper.toDTOList(trainings);
+    }
+
+    @Transactional
+    @Override
+    public List<TrainerReadDto> getTrainersNotAssignedToTrainee(String traineeUsername) {
+        List<Trainer> trainers = trainerRepository.findTrainersNotAssignedToTrainee(traineeUsername);
+        return trainerMapper.toDTOList(trainers);
     }
 
 

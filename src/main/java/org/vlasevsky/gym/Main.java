@@ -16,7 +16,7 @@ public class Main {
         Tomcat tomcat = new Tomcat();
 
         tomcat.setPort(Integer.parseInt(System.getProperty("server.port", "8081")));
-        Context context = tomcat.addWebapp("", new File("src/main/").getAbsolutePath());
+        Context context = tomcat.addWebapp("", new File("src/main/webapp").getAbsolutePath());
         tomcat.getConnector();
 
         AnnotationConfigWebApplicationContext appContext = new AnnotationConfigWebApplicationContext();

@@ -13,15 +13,13 @@ public interface TraineeService extends BaseService<Trainee, Long> {
 
     TraineeProfileReadDto findTraineeByUsername(String username);
 
-    TraineeProfileReadDto update(TraineeCreateAndUpdateDto dto);
+    TraineeProfileReadDto update(String username, TraineeCreateAndUpdateDto dto);
 
     void delete(String username);
 
-    void changeActiveStatus(String username, boolean isActive);
+    void changeActiveStatus(String username, StatusUpdateDto statusUpdateDto);
 
     List<TrainingReadDto> getTraineeTrainings(String username, LocalDateTime from, LocalDateTime to, String trainerName);
-
-    List<TrainerReadDto> getTrainersNotAssignedToTrainee(String traineeUsername);
 
     TraineeProfileReadDto updateTraineeTrainers(String username, List<String> trainers);
 }

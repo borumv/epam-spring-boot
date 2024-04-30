@@ -9,7 +9,7 @@ import org.vlasevsky.gym.dto.CredentialsDto;
 import org.vlasevsky.gym.service.UserService;
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/user")
 @AllArgsConstructor
 public class UserController {
     @Autowired

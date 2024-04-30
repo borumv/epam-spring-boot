@@ -11,7 +11,7 @@ import org.vlasevsky.gym.service.TrainingTypeService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/training_types")
+@RequestMapping("/training_types")
 @AllArgsConstructor
 public class TrainingTypeController {
 

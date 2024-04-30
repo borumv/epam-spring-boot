@@ -54,10 +54,10 @@ public class TraineeServiceMap implements TraineeService {
 
     @Transactional
     @Override
-    public void changeActiveStatus(String username, boolean isActive) {
+    public void changeActiveStatus(String username, StatusUpdateDto statusUpdateDto) {
         Trainee trainee = traineeRepository.findByUsername(username)
                 .orElseThrow(() -> new TraineeNotFoundException(username));
-        trainee.setIsActive(isActive);
+        trainee.setIsActive(statusUpdateDto.isActive());
         traineeRepository.save(trainee);
     }
 
@@ -82,10 +82,10 @@ public class TraineeServiceMap implements TraineeService {
     }
 
     @Transactional
-    public TraineeProfileReadDto update(TraineeCreateAndUpdateDto dto) {
+    public TraineeProfileReadDto update(String username, TraineeCreateAndUpdateDto dto) {
 
-        Trainee existingTrainee = traineeRepository.findByUsername(dto.username())
-                .orElseThrow(() -> new UserNotFoundException("User with username: " + dto.username() + " not found"));
+        Trainee existingTrainee = traineeRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException("User with username: " + username + " not found"));
 
         existingTrainee.setFirstName(dto.firstName());
         existingTrainee.setLastName(dto.lastName());
@@ -149,10 +149,4 @@ public class TraineeServiceMap implements TraineeService {
         return findTraineeByUsername(username);
     }
 
-    @Transactional
-    @Override
-    public List<TrainerReadDto> getTrainersNotAssignedToTrainee(String traineeUsername) {
-        List<Trainer> trainers = trainerRepository.findTrainersNotAssignedToTrainee(traineeUsername);
-        return trainerMapper.toDTOList(trainers);
-    }
 }
