@@ -6,9 +6,6 @@ import org.vlasevsky.gym.model.TrainingType;
 import java.util.List;
 
 public record TrainerCreateDto(
-        @NotBlank(message = "Username must not be blank")
-        String username,
-
         @NotBlank(message = "First name must not be blank")
         String firstName,
 

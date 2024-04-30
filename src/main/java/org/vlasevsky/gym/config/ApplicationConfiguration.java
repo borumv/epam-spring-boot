@@ -3,6 +3,8 @@ package org.vlasevsky.gym.config;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.server.WebServerFactoryCustomizer;
+import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -63,6 +65,13 @@ public class ApplicationConfiguration {
         transactionManager.setSessionFactory(sessionFactory);
         return transactionManager;
     }
+
+
+    @Bean
+    public WebServerFactoryCustomizer<ConfigurableServletWebServerFactory> webServerFactoryCustomizer() {
+        return factory -> factory.setContextPath("/api");
+    }
+
 
 
 }

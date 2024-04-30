@@ -11,10 +11,12 @@ public interface TrainerService extends BaseService<Trainer, Long>{
 
     TrainerProfileReadDto findTrainerByUsername(String username);
 
-    TrainerProfileReadDto update(TrainerCreateDto dto);
+    TrainerProfileReadDto update(String username, TrainerCreateDto dto);
 
-
-    void changeActiveStatus(String username, boolean isActive);
+    List<TrainerReadDto> findAll();
+    void changeActiveStatus(String username, StatusUpdateDto dto);
 
     List<TrainingReadDto> getTrainerTrainings(String username, LocalDateTime from, LocalDateTime to, String traineeName);
+
+    List<TrainerReadDto> getTrainersNotAssignedToTrainee(String traineeUsername);
 }

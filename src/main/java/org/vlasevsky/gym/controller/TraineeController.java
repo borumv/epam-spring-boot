@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/trainees")
+@RequestMapping("/trainees")
 @AllArgsConstructor
 public class TraineeController {
 
@@ -34,27 +34,27 @@ public class TraineeController {
         return "Hello, World!";
     }
 
-    @GetMapping("/profile")
-    public ResponseEntity<TraineeProfileReadDto> getTraineeProfile(@RequestParam String username) {
+    @GetMapping("/{username}")
+    public ResponseEntity<TraineeProfileReadDto> getTraineeProfile(@PathVariable String username) {
         TraineeProfileReadDto profile = traineeService.findTraineeByUsername(username);
         return new ResponseEntity<>(profile, HttpStatus.OK);
     }
 
-    @PutMapping("/profile")
-    public ResponseEntity<TraineeProfileReadDto> updateTraineeProfile(@RequestBody TraineeCreateAndUpdateDto dto) {
-        TraineeProfileReadDto updatedProfile = traineeService.update(dto);
+    @PutMapping("/{username}")
+    public ResponseEntity<TraineeProfileReadDto> updateTraineeProfile(@PathVariable String username, @RequestBody TraineeCreateAndUpdateDto dto) {
+        TraineeProfileReadDto updatedProfile = traineeService.update(username, dto);
         return new ResponseEntity<>(updatedProfile, HttpStatus.OK);
     }
 
-    @DeleteMapping("/profile")
-    public ResponseEntity<Void> deleteTraineeProfile(@RequestParam String username) {
+    @DeleteMapping("/{username}")
+    public ResponseEntity<Void> deleteTraineeProfile(@PathVariable String username) {
         traineeService.delete(username);
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("/activate")
-    public ResponseEntity<Void> changeTraineeActiveStatus(@RequestParam String username, @RequestParam boolean isActive) {
-        traineeService.changeActiveStatus(username, isActive);
+    @PatchMapping("/{username}")
+    public ResponseEntity<Void> changeTraineeActiveStatus(@PathVariable String username, @RequestBody StatusUpdateDto statusDto) {
+        traineeService.changeActiveStatus(username, statusDto);
         return ResponseEntity.ok().build();
     }
 
@@ -74,8 +74,4 @@ public class TraineeController {
         return ResponseEntity.ok(trainings);
     }
 
-    @GetMapping("/{username}/trainers")
-    public List<TrainerReadDto> getNotAssignedTrainers(@PathVariable String username) {
-        return traineeService.getTrainersNotAssignedToTrainee(username);
-    }
 }
