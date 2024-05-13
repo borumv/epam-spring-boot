@@ -11,7 +11,7 @@
 	<groupId>com.vlasevsky.gym</groupId>
 	<artifactId>gym-app</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>gym-app</name>
+	<name>epam-spring-boot</name>
 	<description>Gym-project for EPAM</description>
 	<properties>
 		<java.version>17</java.version>
