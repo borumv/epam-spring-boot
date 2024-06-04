@@ -1,6 +1,7 @@
 package com.vlasevsky.gym.controller;
 
 import com.vlasevsky.gym.dto.*;
+import com.vlasevsky.gym.service.AuthenticationService;
 import com.vlasevsky.gym.service.TraineeService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +21,14 @@ public class TraineeController {
     @Autowired
     private TraineeService traineeService;
 
+    private AuthenticationService authenticationService;
+
     @PostMapping("/register")
-    public ResponseEntity<CredentialsDto> registerTrainee(@RequestBody TraineeRegistrationDto registrationDto) {
-        CredentialsDto credentials = traineeService.register(registrationDto);
-        return new ResponseEntity<>(credentials, HttpStatus.CREATED);
+    public ResponseEntity<RegistrationResponse> registerTrainee(
+            @RequestBody TraineeRegistrationDto request
+    ){
+
+        return ResponseEntity.ok(authenticationService.registerTrainee(request));
     }
 
     @GetMapping()

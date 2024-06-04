@@ -1,9 +1,9 @@
 -- Вставка пользователей
-INSERT INTO users (first_name, last_name, username, password, is_active) VALUES
-                                                                             ('John', 'Doe', 'john.doe', 'pass123', TRUE),
-                                                                             ('Jane', 'Smith', 'jane.smith', 'pass123', TRUE),
-                                                                             ('Alice', 'Johnson', 'alice.johnson', 'pass123', TRUE),  -- Добавлен тренер
-                                                                             ('Bob', 'Brown', 'bob.brown', 'pass123', TRUE);          -- Добавлен тренер
+INSERT INTO users (first_name, last_name, username, password, is_active, role) VALUES
+                                                                             ('John', 'Doe', 'john.doe', '$2a$10$ddfp.XpIR4kWrCIPtvaEFeiTiB5lKr/LTa85ShVfz0w/urQrGBUZy', TRUE, 'USER'),
+                                                                             ('Jane', 'Smith', 'jane.smith', '$2a$10$ddfp.XpIR4kWrCIPtvaEFeiTiB5lKr/LTa85ShVfz0w/urQrGBUZy', TRUE, 'USER'),
+                                                                             ('Alice', 'Johnson', 'alice.johnson', '$2a$10$ddfp.XpIR4kWrCIPtvaEFeiTiB5lKr/LTa85ShVfz0w/urQrGBUZy', TRUE, 'USER'),  -- Добавлен тренер
+                                                                             ('Bob', 'Brown', 'bob.brown', '$2a$10$ddfp.XpIR4kWrCIPtvaEFeiTiB5lKr/LTa85ShVfz0w/urQrGBUZy', TRUE, 'USER');          -- Добавлен тренер
 
 -- Вставка тренировок (тренируемые)
 INSERT INTO trainees (id, date_of_birth, address) VALUES
