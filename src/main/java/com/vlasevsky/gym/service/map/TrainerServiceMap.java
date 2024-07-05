@@ -31,24 +31,9 @@ public class TrainerServiceMap implements TrainerService {
     private final TrainerRepository trainerRepository;
     private final TrainingRepository trainingRepository;
     private final TrainingTypeRepository trainingTypeRepository;
-    private final UserCredentialsService userCredentialsService;
     private final TrainerMapper trainerMapper;
     private final TraineeMapper traineeMapper;
     private final TrainingMapper trainingMapper;
-
-    @Transactional
-    @Override
-    public CredentialsDto register(TrainerRegistrationDto registrationDto) {
-        log.info("Registering trainer with first name: {}", registrationDto.firstName());
-        Trainer trainerEntity = trainerMapper.toEntity(registrationDto);
-        String username = userCredentialsService.generateUsername(trainerEntity.getFirstName(), trainerEntity.getLastName());
-        String password = userCredentialsService.generateRandomPassword();
-        trainerEntity.setUsername(username);
-        trainerEntity.setPassword(password);
-        trainerRepository.save(trainerEntity);
-        log.info("Trainer registered with username: {}", username);
-        return new CredentialsDto(username, password);
-    }
 
     @Transactional
     @Override

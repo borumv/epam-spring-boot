@@ -30,7 +30,7 @@ import java.util.Optional;
 public class TrainingServiceMap implements TrainingService {
 
     private final TrainingRepository trainingRepository;
-    private final UserCredentialsService userCredentialsService;
+
     private final TrainingMapper trainingMapper;
     private final TraineeRepository traineeRepository;
     private final TrainerRepository trainerRepository;
@@ -39,10 +39,6 @@ public class TrainingServiceMap implements TrainingService {
     @Transactional
     public Training create(Training training, CredentialsDto credentialsDto) {
         log.info("Creating new training with credentials: {}", credentialsDto.username());
-        if (!userCredentialsService.checkCredentials(credentialsDto)) {
-            log.warn("Invalid credentials provided for creating training");
-            throw new AuthenticationException("Invalid credentials");
-        }
         Training savedTraining = trainingRepository.save(training);
         log.info("Training saved successfully: {}", savedTraining);
         return savedTraining;
@@ -51,10 +47,6 @@ public class TrainingServiceMap implements TrainingService {
     @Transactional
     public boolean delete(Long id, CredentialsDto credentialsDto) {
         log.info("Deleting training with ID: {} using credentials: {}", id, credentialsDto.username());
-        if (!userCredentialsService.checkCredentials(credentialsDto)) {
-            log.warn("Invalid credentials provided for deleting training");
-            throw new AuthenticationException("Invalid credentials");
-        }
         Optional<Training> maybeTraining = trainingRepository.findById(id);
         maybeTraining.ifPresent(training -> {
             trainingRepository.delete(training);

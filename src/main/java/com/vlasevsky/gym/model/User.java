@@ -8,6 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 
@@ -24,23 +25,23 @@ public class User implements BaseEntity<Long>, UserDetails {
     private Long id;
     @Column(name = "first_name")
     private String firstName;
-
     @Column(name = "last_name")
     private String lastName;
-
     @Column(name = "username", unique = true)
     private String username;
-
     @Column(name = "password")
     private String password;
-
     @Column(name = "is_active")
     private Boolean isActive =Boolean.TRUE;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
     private Role role;
-
+    @Column(name = "account_non_locked")
+    private boolean accountNonLocked = Boolean.TRUE;
+    @Column(name = "failed_attempt")
+    private int failedAttempt;
+    @Column(name = "lock_time")
+    private LocalDate lockTime;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -54,7 +55,7 @@ public class User implements BaseEntity<Long>, UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return isActive;
+        return true;
     }
 
     @Override

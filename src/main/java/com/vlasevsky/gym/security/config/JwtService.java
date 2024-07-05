@@ -1,4 +1,4 @@
-package com.vlasevsky.gym.config;
+package com.vlasevsky.gym.security.config;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -13,12 +13,15 @@ import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 @Service
 public class JwtService {
 
     private static final String SECRET_KEY = "426896c41151df08106ab4fabc439661c28f3580a1edf1de551051d07b328b43";
+
+    private final Map<String, Boolean> blacklistedTokens = new ConcurrentHashMap<>();
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
@@ -48,7 +51,12 @@ public class JwtService {
 
     public boolean isTokenValid(String token, UserDetails userDetails){
         final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token) & !isTokenBlacklisted(token);
+    }
+
+
+    private boolean isTokenBlacklisted(String token) {
+        return blacklistedTokens.getOrDefault(token, false);
     }
 
     private boolean isTokenExpired(String token) {
@@ -71,4 +79,12 @@ public class JwtService {
         byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
         return Keys.hmacShaKeyFor(keyBytes);
     }
+
+    public void invalidateToken(String token) {
+
+        blacklistedTokens.put(token, true);
+    }
+
+
+
 }

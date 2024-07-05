@@ -2,7 +2,6 @@ package com.vlasevsky.gym.service.map;
 
 import com.vlasevsky.gym.dto.CredentialsDto;
 import com.vlasevsky.gym.dto.TrainingCreateDto;
-import com.vlasevsky.gym.exceptions.AuthenticationException;
 import com.vlasevsky.gym.exceptions.TraineeNotFoundException;
 import com.vlasevsky.gym.exceptions.TrainerNotFoundException;
 import com.vlasevsky.gym.exceptions.TrainingTypeNotFoundException;
@@ -15,28 +14,29 @@ import com.vlasevsky.gym.repository.TraineeRepository;
 import com.vlasevsky.gym.repository.TrainerRepository;
 import com.vlasevsky.gym.repository.TrainingRepository;
 import com.vlasevsky.gym.repository.TrainingTypeRepository;
-import org.junit.jupiter.api.BeforeEach;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
-import org.mapstruct.factory.Mappers;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Date;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class TrainingServiceMapTest {
+
     @Mock
     private TrainingRepository trainingRepository;
-
     @Mock
-    private UserCredentialsService userCredentialsService;
-
-    @Spy
-    private TrainingMapper trainingMapper = Mappers.getMapper(TrainingMapper.class);
+    private TrainingMapper trainingMapper;
 
     @Mock
     private TraineeRepository traineeRepository;
@@ -48,135 +48,82 @@ class TrainingServiceMapTest {
     private TrainingTypeRepository trainingTypeRepository;
 
     @InjectMocks
-    private TrainingServiceMap trainingServiceMap;
+    private TrainingServiceMap trainingService;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
+    private static final String TRAINEE_USERNAME = "trainee1";
+    private static final String TRAINER_USERNAME = "trainer1";
+    private static final TrainingType.Type TRAINING_TYPE = TrainingType.Type.STRENGTH_TRAINING;
+    private static final Trainee TRAINEE = new Trainee();
+    private static final Trainer TRAINER = new Trainer();
+    private static final Training TRAINING = new Training();
+    private static final TrainingCreateDto TRAINING_CREATE_DTO = new TrainingCreateDto(TRAINEE_USERNAME, TRAINER_USERNAME, "Strength Training", TRAINING_TYPE, 60);
+    private static final CredentialsDto CREDENTIALS_DTO = new CredentialsDto(TRAINER_USERNAME, "password");
+
+    static {
+        TRAINEE.setUsername(TRAINEE_USERNAME);
+        TRAINER.setUsername(TRAINER_USERNAME);
+        TRAINING.setId(1L);
     }
 
     @Test
-    void createTrainingWithValidCredentials() {
+    @SneakyThrows
+    void testCreateTraining() {
+        when(traineeRepository.findByUsername(anyString())).thenReturn(Optional.of(TRAINEE));
+        when(trainerRepository.findByUsername(anyString())).thenReturn(Optional.of(TRAINER));
+        when(trainingTypeRepository.findByName(any(TrainingType.Type.class))).thenReturn(Optional.of(new TrainingType()));
+        when(trainingMapper.toEntity(any(TrainingCreateDto.class))).thenReturn(TRAINING);
 
-        Training training = new Training();
-        CredentialsDto credentialsDto = new CredentialsDto("testUser", "password");
-        when(userCredentialsService.checkCredentials(credentialsDto)).thenReturn(true);
-        when(trainingRepository.save(training)).thenReturn(training);
+        trainingService.create(TRAINING_CREATE_DTO);
 
-        Training result = trainingServiceMap.create(training, credentialsDto);
-
-        assertEquals(training, result);
-        verify(trainingRepository, times(1)).save(training);
+        verify(trainingRepository, times(1)).save(any(Training.class));
     }
 
     @Test
-    void createTrainingWithInvalidCredentials() {
+    @SneakyThrows
+    void testCreateTrainingTraineeNotFound() {
+        when(traineeRepository.findByUsername(anyString())).thenReturn(Optional.empty());
 
-        Training training = new Training();
-        CredentialsDto credentialsDto = new CredentialsDto("testUser", "wrongPassword");
-        when(userCredentialsService.checkCredentials(credentialsDto)).thenReturn(false);
-
-
-        assertThrows(AuthenticationException.class, () -> trainingServiceMap.create(training, credentialsDto));
-        verify(trainingRepository, times(0)).save(training);
+        assertThrows(TraineeNotFoundException.class, () -> trainingService.create(TRAINING_CREATE_DTO));
     }
 
     @Test
-    void deleteTrainingWithValidCredentials() {
+    @SneakyThrows
+    void testCreateTrainingTrainerNotFound() {
+        when(traineeRepository.findByUsername(anyString())).thenReturn(Optional.of(TRAINEE));
+        when(trainerRepository.findByUsername(anyString())).thenReturn(Optional.empty());
 
-        Long id = 1L;
-        Training training = new Training();
-        CredentialsDto credentialsDto = new CredentialsDto("testUser", "password");
-        when(userCredentialsService.checkCredentials(credentialsDto)).thenReturn(true);
-        when(trainingRepository.findById(id)).thenReturn(Optional.of(training));
+        assertThrows(TrainerNotFoundException.class, () -> trainingService.create(TRAINING_CREATE_DTO));
+    }
 
-        boolean result = trainingServiceMap.delete(id, credentialsDto);
+    @Test
+    @SneakyThrows
+    void testCreateTrainingTypeNotFound() {
+        when(traineeRepository.findByUsername(anyString())).thenReturn(Optional.of(TRAINEE));
+        when(trainerRepository.findByUsername(anyString())).thenReturn(Optional.of(TRAINER));
+        when(trainingTypeRepository.findByName(any(TrainingType.Type.class))).thenReturn(Optional.empty());
+
+        assertThrows(TrainingTypeNotFoundException.class, () -> trainingService.create(TRAINING_CREATE_DTO));
+    }
+
+    @Test
+    @SneakyThrows
+    void testDeleteTraining() {
+        when(trainingRepository.findById(anyLong())).thenReturn(Optional.of(TRAINING));
+
+        boolean result = trainingService.delete(TRAINING.getId(), CREDENTIALS_DTO);
 
         assertTrue(result);
-        verify(trainingRepository, times(1)).delete(training);
+        verify(trainingRepository, times(1)).delete(any(Training.class));
     }
 
     @Test
-    void deleteTrainingWithInvalidCredentials() {
+    @SneakyThrows
+    void testDeleteTrainingNotFound() {
+        when(trainingRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        Long id = 1L;
-        Training training = new Training();
-        CredentialsDto credentialsDto = new CredentialsDto("testUser", "wrongPassword");
-        when(userCredentialsService.checkCredentials(credentialsDto)).thenReturn(false);
+        boolean result = trainingService.delete(TRAINING.getId(), CREDENTIALS_DTO);
 
-        assertThrows(AuthenticationException.class, () -> trainingServiceMap.delete(id, credentialsDto));
-        verify(trainingRepository, times(0)).delete(training);
-    }
-
-    @Test
-    void createTraining() {
-
-        String traineeUsername = "testTrainee";
-        String trainerUsername = "testTrainer";
-        TrainingCreateDto createDto = new TrainingCreateDto(traineeUsername, trainerUsername, "Test Training", TrainingType.Type.CARDIO, 60);
-        Trainee trainee = new Trainee();
-        Trainer trainer = new Trainer();
-        TrainingType trainingType = new TrainingType();
-
-        when(traineeRepository.findByUsername(traineeUsername)).thenReturn(Optional.of(trainee));
-        when(trainerRepository.findByUsername(trainerUsername)).thenReturn(Optional.of(trainer));
-        when(trainingTypeRepository.findByName(TrainingType.Type.CARDIO)).thenReturn(Optional.of(trainingType));
-        Training training = new Training();
-        training.setTrainee(trainee);
-        training.setTrainer(trainer);
-        training.setTrainingType(trainingType);
-        training.setName(createDto.name());
-        training.setDuration(createDto.duration());
-
-        when(trainingMapper.toEntity(createDto)).thenReturn(training);
-        when(trainingRepository.save(training)).thenReturn(training);
-
-        trainingServiceMap.create(createDto);
-
-        verify(trainingRepository, times(1)).save(training);
-    }
-
-    @Test
-    void createTrainingWithNonExistingTrainee() {
-
-        String traineeUsername = "nonExistentTrainee";
-        String trainerUsername = "testTrainer";
-        TrainingCreateDto createDto = new TrainingCreateDto(traineeUsername, trainerUsername, "Test Training", TrainingType.Type.CARDIO, 60);
-        when(traineeRepository.findByUsername(traineeUsername)).thenReturn(Optional.empty());
-
-        assertThrows(TraineeNotFoundException.class, () -> trainingServiceMap.create(createDto));
-        verify(trainingRepository, times(0)).save(any());
-    }
-
-    @Test
-    void createTrainingWithNonExistingTrainer() {
-
-        String traineeUsername = "testTrainee";
-        String trainerUsername = "nonExistentTrainer";
-        TrainingCreateDto createDto = new TrainingCreateDto(traineeUsername, trainerUsername, "Test Training", TrainingType.Type.CARDIO, 60);
-        Trainee trainee = new Trainee();
-        when(traineeRepository.findByUsername(traineeUsername)).thenReturn(Optional.of(trainee));
-        when(trainerRepository.findByUsername(trainerUsername)).thenReturn(Optional.empty());
-
-
-        assertThrows(TrainerNotFoundException.class, () -> trainingServiceMap.create(createDto));
-        verify(trainingRepository, times(0)).save(any());
-    }
-
-    @Test
-    void createTrainingWithNonExistingTrainingType() {
-
-        String traineeUsername = "testTrainee";
-        String trainerUsername = "testTrainer";
-        TrainingCreateDto createDto = new TrainingCreateDto(traineeUsername, trainerUsername, "Test Training", TrainingType.Type.CARDIO, 60);
-        Trainee trainee = new Trainee();
-        Trainer trainer = new Trainer();
-        when(traineeRepository.findByUsername(traineeUsername)).thenReturn(Optional.of(trainee));
-        when(trainerRepository.findByUsername(trainerUsername)).thenReturn(Optional.of(trainer));
-        when(trainingTypeRepository.findByName(TrainingType.Type.CARDIO)).thenReturn(Optional.empty());
-
-
-        assertThrows(TrainingTypeNotFoundException.class, () -> trainingServiceMap.create(createDto));
-        verify(trainingRepository, times(0)).save(any());
+        assertFalse(result);
+        verify(trainingRepository, never()).delete(any(Training.class));
     }
 }

@@ -31,10 +31,11 @@ public class TrainerController {
         }
         return trainerService.findAll();
     }
+
     @PostMapping("/register")
     public ResponseEntity<RegistrationResponse> registerTrainer(
             @RequestBody TrainerRegistrationDto request
-    ){
+    ) {
         return ResponseEntity.ok(authenticationService.registerTrainer(request));
     }
 
@@ -59,17 +60,6 @@ public class TrainerController {
         trainerService.changeActiveStatus(username, dto);
         return ResponseEntity.ok().build();
     }
-
-    @GetMapping("/{username}/trainings")
-    public ResponseEntity<List<TrainingReadDto>> getTrainerTrainings(
-            @PathVariable String username,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to,
-            @RequestParam(required = false) String traineeName) {
-        List<TrainingReadDto> trainings = trainerService.getTrainerTrainings(username, from, to, traineeName);
-        return ResponseEntity.ok(trainings);
-    }
-
 
 
 }

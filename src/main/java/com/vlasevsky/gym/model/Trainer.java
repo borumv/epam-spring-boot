@@ -14,7 +14,7 @@ import java.util.Set;
 
 public class Trainer extends User {
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(
             name = "trainer_training_type",
             joinColumns = @JoinColumn(name = "trainer_id"),
@@ -22,7 +22,7 @@ public class Trainer extends User {
     )
     private List<TrainingType> specializations;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "trainee_trainer",
             joinColumns = @JoinColumn(name = "trainer_id"),
@@ -32,7 +32,7 @@ public class Trainer extends User {
     private Set<Trainee> trainees;
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "trainer", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "trainer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<Training> trainings;
 
 

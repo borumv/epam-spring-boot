@@ -2,44 +2,33 @@ package com.vlasevsky.gym.controller;
 
 import com.vlasevsky.gym.dto.TrainingCreateDto;
 import com.vlasevsky.gym.service.TrainingService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.ResponseEntity;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 
-@WebMvcTest(TrainingController.class)
+@ExtendWith(MockitoExtension.class)
 class TrainingControllerTest {
-    @Autowired
-    private MockMvc mockMvc;
 
-    @MockBean
+    @Mock
     private TrainingService trainingService;
 
-    private TrainingCreateDto createDto;
-
-    @BeforeEach
-    void setUp() {
-        createDto = new TrainingCreateDto("traineeUsername", "trainerUsername", "Test Training", null, 60);
-    }
+    @InjectMocks
+    private TrainingController trainingController;
 
     @Test
-    void registerTrainee() throws Exception {
+    void testRegisterTrainee() {
+        TrainingCreateDto createDto = new TrainingCreateDto("trainee1", "trainer1", "Strength Training", null, 60);
 
-        Mockito.doNothing().when(trainingService).create(createDto);
+        ResponseEntity<Void> result = trainingController.registerTrainee(createDto);
 
-        ResultActions resultActions = mockMvc.perform(post("/trainings")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"traineeUsername\":\"traineeUsername\",\"trainerUsername\":\"trainerUsername\",\"name\":\"Test Training\",\"duration\":60}"));
-
-        resultActions.andExpect(status().isOk());
+        assertEquals(ResponseEntity.ok().build(), result);
+        verify(trainingService).create(any(TrainingCreateDto.class));
     }
 }

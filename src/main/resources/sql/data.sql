@@ -1,9 +1,9 @@
 -- Вставка пользователей
-INSERT INTO users (first_name, last_name, username, password, is_active, role) VALUES
-                                                                             ('John', 'Doe', 'john.doe', '$2a$10$ddfp.XpIR4kWrCIPtvaEFeiTiB5lKr/LTa85ShVfz0w/urQrGBUZy', TRUE, 'USER'),
-                                                                             ('Jane', 'Smith', 'jane.smith', '$2a$10$ddfp.XpIR4kWrCIPtvaEFeiTiB5lKr/LTa85ShVfz0w/urQrGBUZy', TRUE, 'USER'),
-                                                                             ('Alice', 'Johnson', 'alice.johnson', '$2a$10$ddfp.XpIR4kWrCIPtvaEFeiTiB5lKr/LTa85ShVfz0w/urQrGBUZy', TRUE, 'USER'),  -- Добавлен тренер
-                                                                             ('Bob', 'Brown', 'bob.brown', '$2a$10$ddfp.XpIR4kWrCIPtvaEFeiTiB5lKr/LTa85ShVfz0w/urQrGBUZy', TRUE, 'USER');          -- Добавлен тренер
+INSERT INTO users (first_name, last_name, username, password, is_active, role,failed_attempt, account_non_locked) VALUES
+                                                                             ('John', 'Doe', 'john.doe', '$2a$10$WyCYPLQRJTiV8g1lsnuvpeJWHfdn7PWeV.70omdjT0ktIKgtkT7j.', TRUE, 'USER',0, true),
+                                                                             ('Jane', 'Smith', 'jane.smith', '$2a$10$WyCYPLQRJTiV8g1lsnuvpeJWHfdn7PWeV.70omdjT0ktIKgtkT7j.', TRUE, 'USER',0, true),
+                                                                             ('Alice', 'Johnson', 'alice.johnson', '$2a$10$WyCYPLQRJTiV8g1lsnuvpeJWHfdn7PWeV.70omdjT0ktIKgtkT7j.', TRUE, 'USER',0, true),  -- Добавлен тренер
+                                                                             ('Bob', 'Brown', 'bob.brown', '$2a$10$WyCYPLQRJTiV8g1lsnuvpeJWHfdn7PWeV.70omdjT0ktIKgtkT7j.', TRUE, 'USER',0, true);          -- Добавлен тренер
 
 -- Вставка тренировок (тренируемые)
 INSERT INTO trainees (id, date_of_birth, address) VALUES

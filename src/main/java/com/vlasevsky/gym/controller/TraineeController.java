@@ -26,7 +26,7 @@ public class TraineeController {
     @PostMapping("/register")
     public ResponseEntity<RegistrationResponse> registerTrainee(
             @RequestBody TraineeRegistrationDto request
-    ){
+    ) {
 
         return ResponseEntity.ok(authenticationService.registerTrainee(request));
     }

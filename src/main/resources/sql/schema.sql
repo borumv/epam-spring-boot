@@ -13,7 +13,10 @@ CREATE TABLE users (
                        username VARCHAR(255) UNIQUE,
                        password VARCHAR(255),
                        role VARCHAR(8),
-                       is_active BOOLEAN
+                       is_active BOOLEAN,
+                       failed_attempt SMALLINT,
+                       account_non_locked BOOLEAN,
+                       lock_time TIMESTAMP
 );
 
 CREATE TABLE trainees (

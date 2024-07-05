@@ -29,7 +29,6 @@ public class TraineeServiceMap implements TraineeService {
     private final TraineeRepository traineeRepository;
     private final TrainerRepository trainerRepository;
     private final TrainingRepository trainingRepository;
-    private final UserCredentialsService userCredentialsService;
     private final TraineeMapper traineeMapper;
     private final TrainingMapper trainingMapper;
     private final TrainerMapper trainerMapper;
@@ -72,20 +71,6 @@ public class TraineeServiceMap implements TraineeService {
         List<TrainingReadDto> trainingDtos = trainingMapper.toDTOList(trainings);
         log.info("Found {} trainings", trainingDtos.size());
         return trainingDtos;
-    }
-
-    @Transactional
-    @Override
-    public CredentialsDto register(TraineeRegistrationDto registrationDto) {
-        log.info("Registering trainee: {}", registrationDto.firstName());
-        Trainee trainee = traineeMapper.toEntity(registrationDto);
-        String username = userCredentialsService.generateUsername(trainee.getFirstName(), trainee.getLastName());
-        String password = userCredentialsService.generateRandomPassword();
-        trainee.setUsername(username);
-        trainee.setPassword(password);
-        traineeRepository.save(trainee);
-        log.info("Trainee registered with username: {}", username);
-        return new CredentialsDto(username, password);
     }
 
     @Transactional
