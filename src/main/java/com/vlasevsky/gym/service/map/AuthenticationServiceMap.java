@@ -1,6 +1,5 @@
 package com.vlasevsky.gym.service.map;
 
-import com.vlasevsky.gym.security.config.JwtService;
 import com.vlasevsky.gym.dto.*;
 import com.vlasevsky.gym.exceptions.UserNotFoundException;
 import com.vlasevsky.gym.model.Role;
@@ -8,6 +7,7 @@ import com.vlasevsky.gym.model.Trainee;
 import com.vlasevsky.gym.model.Trainer;
 import com.vlasevsky.gym.model.User;
 import com.vlasevsky.gym.repository.UserRepository;
+import com.vlasevsky.gym.security.config.JwtService;
 import com.vlasevsky.gym.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -112,26 +112,27 @@ public class AuthenticationServiceMap implements AuthenticationService {
     @Override
     @Transactional
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
-      try{  User user = userRepository.findByUsername(request.username())
-                .orElseThrow(() -> {
-                    log.error("User not found: {}", request.username());
-                    return new UserNotFoundException(request.username());
-                });
-        log.info("Authenticating user: {}", request.username());
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.username(),
-                        request.password()
-                )
-        );
+        try {
+            User user = userRepository.findByUsername(request.username())
+                    .orElseThrow(() -> {
+                        log.error("User not found: {}", request.username());
+                        return new UserNotFoundException(request.username());
+                    });
+            log.info("Authenticating user: {}", request.username());
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.username(),
+                            request.password()
+                    )
+            );
 
-        String token = jwtService.generateToken(user);
-        log.info("User authenticated successfully: {}", request.username());
-        return AuthenticationResponse.builder()
-                .token(token)
-                .build();
-    }catch (AuthenticationException e){
-          throw new com.vlasevsky.gym.exceptions.AuthenticationException(e.getMessage());
-      }
+            String token = jwtService.generateToken(user);
+            log.info("User authenticated successfully: {}", request.username());
+            return AuthenticationResponse.builder()
+                    .token(token)
+                    .build();
+        } catch (AuthenticationException e) {
+            throw new com.vlasevsky.gym.exceptions.AuthenticationException(e.getMessage());
+        }
     }
 }
