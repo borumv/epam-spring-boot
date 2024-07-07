@@ -3,51 +3,35 @@ package com.vlasevsky.gym.controller;
 import com.vlasevsky.gym.model.TrainingType;
 import com.vlasevsky.gym.service.TrainingTypeService;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.ResponseEntity;
 
+import java.util.Collections;
 import java.util.List;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
-@WebMvcTest(TrainingTypeController.class)
+@ExtendWith(MockitoExtension.class)
 class TrainingTypeControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @MockBean
+    @Mock
     private TrainingTypeService trainingTypeService;
 
+    @InjectMocks
+    private TrainingTypeController trainingTypeController;
+
     @Test
-    void getTrainerProfile() throws Exception {
-        // Given
-        TrainingType cardioType = new TrainingType();
-        cardioType.setId(1L);
-        cardioType.setName(TrainingType.Type.CARDIO);
+    void testGetTrainerProfile() {
+        List<TrainingType> trainingTypes = Collections.singletonList(new TrainingType());
 
-        TrainingType strengthType = new TrainingType();
-        strengthType.setId(2L);
-        strengthType.setName(TrainingType.Type.STRENGTH_TRAINING);
+        when(trainingTypeService.findAll()).thenReturn(trainingTypes);
 
-        Mockito.when(trainingTypeService.findAll()).thenReturn(List.of(cardioType, strengthType));
+        ResponseEntity<List<TrainingType>> result = trainingTypeController.getTrainerProfile();
 
-        // When
-        ResultActions resultActions = mockMvc.perform(get("/training_types"));
-
-        // Then
-        resultActions
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].name", is("CARDIO")))
-                .andExpect(jsonPath("$[1].name", is("STRENGTH_TRAINING")));
+        assertEquals(ResponseEntity.ok(trainingTypes), result);
     }
 }

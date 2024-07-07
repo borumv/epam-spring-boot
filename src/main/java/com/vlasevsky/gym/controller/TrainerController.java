@@ -1,6 +1,7 @@
 package com.vlasevsky.gym.controller;
 
 import com.vlasevsky.gym.dto.*;
+import com.vlasevsky.gym.service.AuthenticationService;
 import com.vlasevsky.gym.service.TrainerService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,8 @@ public class TrainerController {
     @Autowired
     private TrainerService trainerService;
 
+    private AuthenticationService authenticationService;
+
     @GetMapping
     public List<TrainerReadDto> getTrainers(@RequestParam(required = false) String unassignedTraineeUsername) {
         if (unassignedTraineeUsername != null) {
@@ -28,10 +31,12 @@ public class TrainerController {
         }
         return trainerService.findAll();
     }
+
     @PostMapping("/register")
-    public ResponseEntity<CredentialsDto> registerTrainee(@RequestBody TrainerRegistrationDto registrationDto) {
-        CredentialsDto credentials = trainerService.register(registrationDto);
-        return new ResponseEntity<>(credentials, HttpStatus.CREATED);
+    public ResponseEntity<RegistrationResponse> registerTrainer(
+            @RequestBody TrainerRegistrationDto request
+    ) {
+        return ResponseEntity.ok(authenticationService.registerTrainer(request));
     }
 
     @GetMapping("/{username}")
@@ -55,17 +60,6 @@ public class TrainerController {
         trainerService.changeActiveStatus(username, dto);
         return ResponseEntity.ok().build();
     }
-
-    @GetMapping("/{username}/trainings")
-    public ResponseEntity<List<TrainingReadDto>> getTrainerTrainings(
-            @PathVariable String username,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to,
-            @RequestParam(required = false) String traineeName) {
-        List<TrainingReadDto> trainings = trainerService.getTrainerTrainings(username, from, to, traineeName);
-        return ResponseEntity.ok(trainings);
-    }
-
 
 
 }

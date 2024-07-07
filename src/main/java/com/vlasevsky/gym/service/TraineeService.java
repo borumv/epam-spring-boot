@@ -10,8 +10,6 @@ import java.util.List;
 public interface TraineeService extends BaseService<Trainee, Long> {
 
 
-    CredentialsDto register(TraineeRegistrationDto registrationDto);
-
     TraineeProfileReadDto findTraineeByUsername(String username);
 
     TraineeProfileReadDto update(String username, TraineeCreateAndUpdateDto dto);

@@ -13,7 +13,6 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class TrainingTypeServiceMap implements TrainingTypeService {
-
     private TrainingTypeRepository trainingTypeRepository;
     @Override
     @Transactional

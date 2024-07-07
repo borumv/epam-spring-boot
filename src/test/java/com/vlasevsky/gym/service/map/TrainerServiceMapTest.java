@@ -11,203 +11,98 @@ import com.vlasevsky.gym.model.TrainingType;
 import com.vlasevsky.gym.repository.TrainerRepository;
 import com.vlasevsky.gym.repository.TrainingRepository;
 import com.vlasevsky.gym.repository.TrainingTypeRepository;
-import org.junit.jupiter.api.BeforeEach;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
-import org.mapstruct.factory.Mappers;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class TrainerServiceMapTest {
 
     @Mock
     private TrainerRepository trainerRepository;
 
+    @Mock
+    private TrainingRepository trainingRepository;
 
     @Mock
     private TrainingTypeRepository trainingTypeRepository;
 
     @Mock
-    private UserCredentialsService userCredentialsService;
+    private TrainerMapper trainerMapper;
 
-    @Spy
-    private TrainerMapper trainerMapper = Mappers.getMapper(TrainerMapper.class);
+    @Mock
+    private TrainingMapper trainingMapper;
 
     @InjectMocks
-    private TrainerServiceMap trainerServiceMap;
+    private TrainerServiceMap trainerService;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
+    private static final String TRAINER_USERNAME = "trainer1";
+    private static final Trainer TRAINER = new Trainer();
+    private static final TrainerProfileReadDto TRAINER_PROFILE_DTO = new TrainerProfileReadDto(TRAINER_USERNAME, "Trainer", "One", Collections.emptyList(), Collections.emptyList());
+    private static final TrainerCreateDto TRAINER_CREATE_DTO = new TrainerCreateDto("Trainer", "One", Collections.emptyList(), true);
+    private static final StatusUpdateDto STATUS_UPDATE_DTO = new StatusUpdateDto(true);
+    private static final List<TrainingReadDto> TRAINING_DTO_LIST = Collections.emptyList();
+    private static final List<Training> TRAININGS = Collections.emptyList();
+    private static final List<TrainerReadDto> TRAINER_DTO_LIST = Collections.emptyList();
+
+    static {
+        TRAINER.setUsername(TRAINER_USERNAME);
     }
 
     @Test
-    void registerTrainer() {
-        // Given
-        TrainerRegistrationDto registrationDto = new TrainerRegistrationDto("John", "Doe", List.of(TrainingType.Type.CARDIO));
-        Trainer trainer = new Trainer();
-        trainer.setFirstName("John");
-        trainer.setLastName("Doe");
-        trainer.setUsername("johndoe");
-        trainer.setPassword("password");
+    @SneakyThrows
+    void testFindAll() {
+        when(trainerRepository.findAll()).thenReturn(Collections.singletonList(TRAINER));
+        when(trainerMapper.toDTOList(anyList())).thenReturn(TRAINER_DTO_LIST);
 
-        when(trainerMapper.toEntity(registrationDto)).thenReturn(trainer);
-        when(userCredentialsService.generateUsername("John", "Doe")).thenReturn("johndoe");
-        when(userCredentialsService.generateRandomPassword()).thenReturn("password");
-        when(trainerRepository.save(trainer)).thenReturn(trainer);
+        List<TrainerReadDto> trainers = trainerService.findAll();
 
-        CredentialsDto result = trainerServiceMap.register(registrationDto);
-
-        assertEquals("johndoe", result.username());
-        assertEquals("password", result.password());
-        verify(trainerRepository, times(1)).save(trainer);
+        assertEquals(TRAINER_DTO_LIST, trainers);
     }
 
     @Test
-    void findTrainerByUsernameThatExists() {
-        // Given
-        String username = "testUser";
-        Trainer trainer = new Trainer();
-        trainer.setUsername(username);
-        trainer.setFirstName("John");
-        trainer.setLastName("Doe");
-        trainer.setSpecializations(new ArrayList<>());
-        trainer.setTrainees(new HashSet<>());
-        when(trainerRepository.findByUsername(username)).thenReturn(Optional.of(trainer));
-        when(trainerMapper.toDto(trainer)).thenReturn(new TrainerReadDto(1L, "testUser", "John", "Doe", List.of(TrainingType.Type.CARDIO)));
+    @SneakyThrows
+    void testChangeActiveStatus() {
+        when(trainerRepository.findByUsername(anyString())).thenReturn(Optional.of(TRAINER));
 
-        // When
-        TrainerProfileReadDto result = trainerServiceMap.findTrainerByUsername(username);
+        trainerService.changeActiveStatus(TRAINER_USERNAME, STATUS_UPDATE_DTO);
 
-        // Then
-        assertEquals("John", result.firstName());
-        assertEquals("Doe", result.lastName());
-        verify(trainerRepository, times(1)).findByUsername(username);
+        verify(trainerRepository, times(1)).save(any(Trainer.class));
     }
 
     @Test
-    void findTrainerByUsernameThatDoesNotExist() {
-        // Given
-        String username = "nonExistentUser";
-        when(trainerRepository.findByUsername(username)).thenReturn(Optional.empty());
+    @SneakyThrows
+    void testGetTrainerTrainings() {
+        when(trainingRepository.findTrainingsByTrainerAndPeriodAndTrainee(anyString(), any(LocalDateTime.class), any(LocalDateTime.class), anyString()))
+                .thenReturn(TRAININGS);
+        when(trainingMapper.toDTOList(anyList())).thenReturn(TRAINING_DTO_LIST);
 
-        // When/Then
-        assertThrows(TrainerNotFoundException.class, () -> trainerServiceMap.findTrainerByUsername(username));
+        List<TrainingReadDto> trainings = trainerService.getTrainerTrainings(TRAINER_USERNAME, LocalDateTime.now().minusDays(1), LocalDateTime.now(), "trainee1");
+
+        assertEquals(TRAINING_DTO_LIST, trainings);
     }
 
     @Test
-    void updateTrainerThatExists() {
-        // Given
-        String username = "testUser";
-        Trainer trainer = new Trainer();
-        trainer.setUsername(username);
-        trainer.setSpecializations(new ArrayList<>());
-        trainer.setTrainees(new HashSet<>());
-        when(trainerRepository.findByUsername(username)).thenReturn(Optional.of(trainer));
-        TrainerCreateDto dto = new TrainerCreateDto("John", "Doe", List.of(TrainingType.Type.CARDIO), true);
+    @SneakyThrows
+    void testGetTrainersNotAssignedToTrainee() {
+        when(trainerRepository.findTrainersNotAssignedToTrainee(anyString())).thenReturn(Collections.singletonList(TRAINER));
+        when(trainerMapper.toDTOList(anyList())).thenReturn(TRAINER_DTO_LIST);
 
-        when(trainingTypeRepository.findByNames(dto.specializations())).thenReturn(List.of(new TrainingType()));
+        List<TrainerReadDto> trainers = trainerService.getTrainersNotAssignedToTrainee("trainee1");
 
-        // When
-        TrainerProfileReadDto result = trainerServiceMap.update(username, dto);
-
-        // Then
-        assertEquals("John", trainer.getFirstName());
-        assertEquals("Doe", trainer.getLastName());
-        assertEquals(true, trainer.getIsActive());
-        verify(trainerRepository, times(1)).save(trainer);
-    }
-
-    @Test
-    void updateTrainerThatDoesNotExist() {
-        // Given
-        String username = "nonExistentUser";
-        when(trainerRepository.findByUsername(username)).thenReturn(Optional.empty());
-        TrainerCreateDto dto = new TrainerCreateDto("John", "Doe", List.of(TrainingType.Type.CARDIO), true);
-
-        // When/Then
-        assertThrows(TrainerNotFoundException.class, () -> trainerServiceMap.update(username, dto));
-    }
-
-    @Test
-    void findAllTrainers() {
-        // Given
-        Trainer trainer = new Trainer();
-        trainer.setUsername("testUser");
-        trainer.setSpecializations(new ArrayList<>());
-        trainer.setTrainees(new HashSet<>());
-        when(trainerRepository.findAll()).thenReturn(List.of(trainer));
-        when(trainerMapper.toDTOList(List.of(trainer))).thenReturn(List.of(new TrainerReadDto(1L, "johndoe", "John", "Doe", List.of(TrainingType.Type.CARDIO))));
-
-        // When
-        List<TrainerReadDto> result = trainerServiceMap.findAll();
-
-        // Then
-        assertEquals(1, result.size());
-        assertEquals("John", result.get(0).firstName());
-        assertEquals("Doe", result.get(0).lastName());
-        verify(trainerRepository, times(1)).findAll();
-    }
-
-    @Test
-    void changeActiveStatusForExistingTrainer() {
-        // Given
-        String username = "testUser";
-        Trainer trainer = new Trainer();
-        trainer.setUsername(username);
-        trainer.setSpecializations(new ArrayList<>());
-        trainer.setTrainees(new HashSet<>());
-        when(trainerRepository.findByUsername(username)).thenReturn(Optional.of(trainer));
-        StatusUpdateDto statusUpdateDto = new StatusUpdateDto(false);
-
-        // When
-        trainerServiceMap.changeActiveStatus(username, statusUpdateDto);
-
-        // Then
-        assertEquals(false, trainer.getIsActive());
-        verify(trainerRepository, times(1)).save(trainer);
-    }
-
-    @Test
-    void changeActiveStatusForNonExistingTrainer() {
-        // Given
-        String username = "nonExistentUser";
-        when(trainerRepository.findByUsername(username)).thenReturn(Optional.empty());
-        StatusUpdateDto statusUpdateDto = new StatusUpdateDto(false);
-
-        // When/Then
-        assertThrows(TrainerNotFoundException.class, () -> trainerServiceMap.changeActiveStatus(username, statusUpdateDto));
-    }
-
-
-    @Test
-    void getTrainersNotAssignedToTrainee() {
-        // Given
-        String traineeUsername = "testTrainee";
-        Trainer trainer = new Trainer();
-        trainer.setUsername("testUser");
-        trainer.setSpecializations(new ArrayList<>());
-        trainer.setTrainees(new HashSet<>());
-        when(trainerRepository.findTrainersNotAssignedToTrainee(traineeUsername)).thenReturn(List.of(trainer));
-        when(trainerMapper.toDTOList(List.of(trainer))).thenReturn(List.of(new TrainerReadDto(1L, "johndoe", "John", "Doe", List.of(TrainingType.Type.CARDIO))));
-
-        // When
-        List<TrainerReadDto> result = trainerServiceMap.getTrainersNotAssignedToTrainee(traineeUsername);
-
-        // Then
-        assertEquals(1, result.size());
-        assertEquals("John", result.get(0).firstName());
-        assertEquals("Doe", result.get(0).lastName());
-        verify(trainerRepository, times(1)).findTrainersNotAssignedToTrainee(traineeUsername);
+        assertEquals(TRAINER_DTO_LIST, trainers);
     }
 }

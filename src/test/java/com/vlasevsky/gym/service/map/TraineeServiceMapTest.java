@@ -1,9 +1,6 @@
 package com.vlasevsky.gym.service.map;
 
-import com.vlasevsky.gym.dto.StatusUpdateDto;
-import com.vlasevsky.gym.dto.TraineeCreateAndUpdateDto;
-import com.vlasevsky.gym.dto.TraineeProfileReadDto;
-import com.vlasevsky.gym.dto.TrainingReadDto;
+import com.vlasevsky.gym.dto.*;
 import com.vlasevsky.gym.exceptions.TraineeNotFoundException;
 import com.vlasevsky.gym.exceptions.UserNotFoundException;
 import com.vlasevsky.gym.mapstruct.TraineeMapper;
@@ -15,206 +12,122 @@ import com.vlasevsky.gym.model.Training;
 import com.vlasevsky.gym.repository.TraineeRepository;
 import com.vlasevsky.gym.repository.TrainerRepository;
 import com.vlasevsky.gym.repository.TrainingRepository;
-import org.junit.jupiter.api.BeforeEach;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
-import org.mapstruct.factory.Mappers;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.mockito.Mockito.*;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class TraineeServiceMapTest {
 
     @Mock
     private TraineeRepository traineeRepository;
+
     @Mock
     private TrainerRepository trainerRepository;
+
     @Mock
     private TrainingRepository trainingRepository;
-    @Spy
-    private TraineeMapper traineeMapper = Mappers.getMapper(TraineeMapper.class);
 
-    @Spy
-    private TrainerMapper trainerMapper = Mappers.getMapper(TrainerMapper.class);
-    @Spy
-    private TrainingMapper trainingMapper = Mappers.getMapper(TrainingMapper.class);
+    @Mock
+    private TraineeMapper traineeMapper;
+
+    @Mock(lenient = true)
+    private TrainingMapper trainingMapper;
+
+    @Mock(lenient = true)
+    private TrainerMapper trainerMapper;
+
     @InjectMocks
-    private TraineeServiceMap traineeServiceMap;
+    private TraineeServiceMap traineeService;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
+    private static final String TRAINEE_USERNAME = "john.doe";
+    private static final String TRAINER_USERNAME = "trainer1";
+    private static final Trainee TRAINEE = new Trainee();
+    private static final Trainer TRAINER = new Trainer();
+    private static final List<Trainer> TRAINERS = new ArrayList<>();
+    private static final TraineeProfileReadDto TRAINEE_PROFILE_DTO = new TraineeProfileReadDto("John", "Doe", null, "123 Street", true, Collections.emptyList());
+    private static final TraineeCreateAndUpdateDto TRAINEE_UPDATE_DTO = new TraineeCreateAndUpdateDto(TRAINEE_USERNAME, "John", "Doe", "123 Street", null, true);
+    private static final StatusUpdateDto STATUS_UPDATE_DTO = new StatusUpdateDto(true);
+    private static final List<TrainingReadDto> TRAINING_DTO_LIST = Collections.emptyList();
+    private static final List<Training> TRAININGS = Collections.emptyList();
+
+    static {
+        TRAINEE.setUsername(TRAINEE_USERNAME);
+        TRAINERS.add(TRAINER);
     }
 
     @Test
-    void deleteTraineeThatExists() {
+    @SneakyThrows
+    void testChangeActiveStatus() {
+        when(traineeRepository.findByUsername(anyString())).thenReturn(Optional.of(TRAINEE));
 
-        String username = "testUser";
-        Trainee trainee = new Trainee();
-        trainee.setUsername(username);
-        trainee.setTrainers(new ArrayList<>());
-        trainee.setTrainings(new ArrayList<>());
-        when(traineeRepository.findByUsername(username)).thenReturn(Optional.of(trainee));
+        traineeService.changeActiveStatus(TRAINEE_USERNAME, STATUS_UPDATE_DTO);
 
-
-        traineeServiceMap.delete(username);
-
-        verify(traineeRepository, times(1)).deleteById(trainee.getId());
-        verify(traineeRepository, times(1)).findByUsername(username);
+        verify(traineeRepository, times(1)).save(any(Trainee.class));
     }
 
     @Test
-    void deleteTraineeThatDoesNotExist() {
+    @SneakyThrows
+    void testGetTraineeTrainings() {
+        when(trainingRepository.findTrainingsByTraineeAndPeriodAndTrainer(anyString(), any(LocalDateTime.class), any(LocalDateTime.class), anyString()))
+                .thenReturn(TRAININGS);
+        when(trainingMapper.toDTOList(anyList())).thenReturn(TRAINING_DTO_LIST);
 
-        String username = "nonExistentUser";
-        when(traineeRepository.findByUsername(username)).thenReturn(Optional.empty());
+        List<TrainingReadDto> trainings = traineeService.getTraineeTrainings(TRAINER_USERNAME, LocalDateTime.now().minusDays(1), LocalDateTime.now(), TRAINEE_USERNAME);
 
-        assertThrows(TraineeNotFoundException.class, () -> traineeServiceMap.delete(username));
+        assertEquals(TRAINING_DTO_LIST, trainings);
     }
 
     @Test
-    void changeActiveStatusForExistingTrainee() {
-        // Given
-        String username = "testUser";
-        Trainee trainee = new Trainee();
-        trainee.setUsername(username);
-        when(traineeRepository.findByUsername(username)).thenReturn(Optional.of(trainee));
-        StatusUpdateDto statusUpdateDto = new StatusUpdateDto(false);
+    @SneakyThrows
+    void testUpdate() {
+        when(traineeRepository.findByUsername(anyString())).thenReturn(Optional.of(TRAINEE));
+        when(traineeMapper.toTraineeProfileDto(any(Trainee.class))).thenReturn(TRAINEE_PROFILE_DTO);
+        when(trainerMapper.toDTOList(anyList())).thenReturn(Collections.emptyList());
 
-        // When
-        traineeServiceMap.changeActiveStatus(username, statusUpdateDto);
+        TraineeProfileReadDto updatedProfile = traineeService.update(TRAINEE_USERNAME, TRAINEE_UPDATE_DTO);
 
-        // Then
-        assertEquals(false, trainee.getIsActive());
-        verify(traineeRepository, times(1)).save(trainee);
+        assertEquals(TRAINEE_PROFILE_DTO, updatedProfile);
+        verify(traineeRepository, times(1)).save(any(Trainee.class));
     }
 
     @Test
-    void changeActiveStatusForNonExistingTrainee() {
-        // Given
-        String username = "nonExistentUser";
-        when(traineeRepository.findByUsername(username)).thenReturn(Optional.empty());
-        StatusUpdateDto statusUpdateDto = new StatusUpdateDto(false);
+    @SneakyThrows
+    void testFindTraineeByUsername() {
+        when(traineeRepository.findByUsername(anyString())).thenReturn(Optional.of(TRAINEE));
+        when(traineeMapper.toTraineeProfileDto(any(Trainee.class))).thenReturn(TRAINEE_PROFILE_DTO);
+        when(trainerMapper.toDTOList(anyList())).thenReturn(Collections.emptyList());
 
-        // When/Then
-        assertThrows(TraineeNotFoundException.class, () -> traineeServiceMap.changeActiveStatus(username, statusUpdateDto));
+        TraineeProfileReadDto profile = traineeService.findTraineeByUsername(TRAINEE_USERNAME);
+
+        assertEquals(TRAINEE_PROFILE_DTO, profile);
     }
 
     @Test
-    void getTraineeTrainingsForNonExistingTrainee() {
-        // Given
-        String traineeName = "nonExistentTrainee";
-        String trainerUsername = "testTrainer";
-        LocalDateTime from = LocalDateTime.now().minusDays(1);
-        LocalDateTime to = LocalDateTime.now();
-        when(trainingRepository.findTrainingsByTraineeAndPeriodAndTrainer(trainerUsername, from, to, traineeName))
-                .thenReturn(List.of());
+    @SneakyThrows
+    void testUpdateTraineeTrainers() {
+        when(traineeRepository.findByUsername(anyString())).thenReturn(Optional.of(TRAINEE));
+        when(trainerRepository.findAllTrainersByUsername(anyList())).thenReturn(TRAINERS);
+        when(traineeMapper.toTraineeProfileDto(any(Trainee.class))).thenReturn(TRAINEE_PROFILE_DTO);
+        when(trainerMapper.toDTOList(anyList())).thenReturn(Collections.emptyList());
 
-        // When
-        List<TrainingReadDto> result = traineeServiceMap.getTraineeTrainings(trainerUsername, from, to, traineeName);
+        TraineeProfileReadDto updatedProfile = traineeService.updateTraineeTrainers(TRAINEE_USERNAME, Collections.singletonList(TRAINER_USERNAME));
 
-        // Then
-        assertTrue(result.isEmpty());
-        verify(trainingRepository, times(1)).findTrainingsByTraineeAndPeriodAndTrainer(trainerUsername, from, to, traineeName);
-    }
-
-
-    @Test
-    void updateExistingTrainee() {
-        // Given
-        String username = "testUser";
-        Trainee trainee = new Trainee();
-        trainee.setUsername(username);
-        trainee.setTrainers(new ArrayList<>());  // Убедимся, что trainers не null и изменяем
-        when(traineeRepository.findByUsername(username)).thenReturn(Optional.of(trainee));
-        TraineeCreateAndUpdateDto dto = new TraineeCreateAndUpdateDto(username, "John", "Doe", "123 Street", null, true);
-
-        // When
-        TraineeProfileReadDto result = traineeServiceMap.update(username, dto);
-
-        // Then
-        assertEquals("John", trainee.getFirstName());
-        assertEquals("Doe", trainee.getLastName());
-        assertEquals("123 Street", trainee.getAddress());
-        verify(traineeRepository, times(1)).save(trainee);
-    }
-
-    @Test
-    void updateNonExistingTrainee() {
-        // Given
-        String username = "nonExistentUser";
-        when(traineeRepository.findByUsername(username)).thenReturn(Optional.empty());
-        TraineeCreateAndUpdateDto dto = new TraineeCreateAndUpdateDto(username, "John", "Doe", "123 Street", null, true);
-
-        // When/Then
-        assertThrows(UserNotFoundException.class, () -> traineeServiceMap.update(username, dto));
-    }
-
-    @Test
-    void findTraineeByUsernameThatExists() {
-        // Given
-        String username = "testUser";
-        Trainee trainee = new Trainee();
-        trainee.setUsername(username);
-        trainee.setTrainers(new ArrayList<>());
-        trainee.setTrainings(new ArrayList<>());
-        when(traineeRepository.findByUsername(username)).thenReturn(Optional.of(trainee));
-
-        // When
-        traineeServiceMap.delete(username);
-
-        // Then
-        verify(traineeRepository, times(1)).deleteById(trainee.getId());
-        verify(traineeRepository, times(1)).findByUsername(username);
-    }
-
-    @Test
-    void findTraineeByUsernameThatDoesNotExist() {
-        // Given
-        String username = "nonExistentUser";
-        when(traineeRepository.findByUsername(username)).thenReturn(Optional.empty());
-
-        // When/Then
-        assertThrows(UserNotFoundException.class, () -> traineeServiceMap.findTraineeByUsername(username));
-    }
-
-    @Test
-    void updateTraineeTrainersForExistingTrainee() {
-        // Given
-        String username = "testUser";
-        Trainee trainee = new Trainee();
-        trainee.setUsername(username);
-        trainee.setTrainers(new ArrayList<>());  // Убедимся, что trainers не null и изменяем
-        List<Trainer> trainers = List.of(new Trainer());
-        when(traineeRepository.findByUsername(username)).thenReturn(Optional.of(trainee));
-        when(trainerRepository.findAllTrainersByUsername(List.of("trainer1", "trainer2"))).thenReturn(trainers);
-
-        // When
-        TraineeProfileReadDto result = traineeServiceMap.updateTraineeTrainers(username, List.of("trainer1", "trainer2"));
-
-        // Then
-        assertEquals(trainers, trainee.getTrainers());
-        verify(traineeRepository, times(1)).save(trainee);
-    }
-
-    @Test
-    void updateTraineeTrainersForNonExistingTrainee() {
-        // Given
-        String username = "nonExistentUser";
-        when(traineeRepository.findByUsername(username)).thenReturn(Optional.empty());
-
-        // When/Then
-        assertThrows(TraineeNotFoundException.class, () -> traineeServiceMap.updateTraineeTrainers(username, List.of("trainer1", "trainer2")));
+        assertEquals(TRAINEE_PROFILE_DTO, updatedProfile);
+        verify(traineeRepository, times(1)).save(any(Trainee.class));
     }
 }

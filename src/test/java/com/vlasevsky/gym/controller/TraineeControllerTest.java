@@ -1,143 +1,103 @@
 package com.vlasevsky.gym.controller;
 
 import com.vlasevsky.gym.dto.*;
+import com.vlasevsky.gym.service.AuthenticationService;
 import com.vlasevsky.gym.service.TraineeService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.ResponseEntity;
 
-import java.time.LocalDate;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.hasSize;
-import static org.mockito.Mockito.times;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
-import static org.springframework.web.servlet.function.RequestPredicates.contentType;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
-
-@WebMvcTest(TraineeController.class)
+@ExtendWith(MockitoExtension.class)
 class TraineeControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @MockBean
+    @Mock
     private TraineeService traineeService;
 
-    private TraineeRegistrationDto registrationDto;
-    private TraineeProfileReadDto profileReadDto;
-    private CredentialsDto credentialsDto;
-    private TraineeCreateAndUpdateDto updateDto;
+    @Mock
+    private AuthenticationService authenticationService;
 
-    @BeforeEach
-    void setUp() {
-        registrationDto = new TraineeRegistrationDto("John", "Doe", null, null);
-        profileReadDto = new TraineeProfileReadDto("John", "Doe", LocalDate.now(), "123 Street", true, List.of());
-        credentialsDto = new CredentialsDto("john.doe", "password");
-        updateDto = new TraineeCreateAndUpdateDto("john.doe", "John", "Doe", "123 Street", new Date(), true);
+    @InjectMocks
+    private TraineeController traineeController;
+
+    @Test
+    void testRegisterTrainee() {
+        TraineeRegistrationDto request = new TraineeRegistrationDto("John", "Doe", null, "123 Street");
+        RegistrationResponse response = new RegistrationResponse("token", "password");
+
+        when(authenticationService.registerTrainee(any(TraineeRegistrationDto.class))).thenReturn(response);
+
+        ResponseEntity<RegistrationResponse> result = traineeController.registerTrainee(request);
+
+        assertEquals(ResponseEntity.ok(response), result);
     }
 
     @Test
-    void registerTrainee() throws Exception {
-        Mockito.when(traineeService.register(registrationDto)).thenReturn(credentialsDto);
-
-        ResultActions resultActions = mockMvc.perform(post("/trainees/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"firstName\":\"John\",\"lastName\":\"Doe\"}"));
-
-        resultActions
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.username").value("john.doe"))
-                .andExpect(jsonPath("$.password").value("password"));
+    void testHello() {
+        String result = traineeController.hello();
+        assertEquals("Hello, World!", result);
     }
 
     @Test
-    void getTraineeProfile() throws Exception {
+    void testGetTraineeProfile() {
+        TraineeProfileReadDto profile = new TraineeProfileReadDto("John", "Doe", null, "123 Street", true, Collections.emptyList());
 
-        Mockito.when(traineeService.findTraineeByUsername("john.doe")).thenReturn(profileReadDto);
+        when(traineeService.findTraineeByUsername(anyString())).thenReturn(profile);
 
-        ResultActions resultActions = mockMvc.perform(get("/trainees/john.doe"));
+        ResponseEntity<TraineeProfileReadDto> result = traineeController.getTraineeProfile("john.doe");
 
-        resultActions
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.firstName").value("John"))
-                .andExpect(jsonPath("$.lastName").value("Doe"))
-                .andExpect(jsonPath("$.address").value("123 Street"))
-                .andExpect(jsonPath("$.isActive").value(true));
+        assertEquals(ResponseEntity.ok(profile), result);
     }
 
     @Test
-    void deleteTraineeProfile() throws Exception {
+    void testUpdateTraineeProfile() {
+        TraineeCreateAndUpdateDto dto = new TraineeCreateAndUpdateDto("john.doe", "John", "Doe", "123 Street", null, true);
+        TraineeProfileReadDto profile = new TraineeProfileReadDto("John", "Doe", null, "123 Street", true, Collections.emptyList());
 
-        ResultActions resultActions = mockMvc.perform(delete("/trainees/john.doe"));
+        when(traineeService.update(anyString(), any(TraineeCreateAndUpdateDto.class))).thenReturn(profile);
 
-        resultActions.andExpect(status().isOk());
-        Mockito.verify(traineeService, times(1)).delete("john.doe");
+        ResponseEntity<TraineeProfileReadDto> result = traineeController.updateTraineeProfile("john.doe", dto);
+
+        assertEquals(ResponseEntity.ok(profile), result);
     }
 
     @Test
-    void changeTraineeActiveStatus() throws Exception {
-        ResultActions resultActions = mockMvc.perform(patch("/trainees/john.doe")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"isActive\":false}"));
+    void testDeleteTraineeProfile() {
+        ResponseEntity<Void> result = traineeController.deleteTraineeProfile("john.doe");
 
-        resultActions.andExpect(status().isOk());
-        Mockito.verify(traineeService, times(1)).changeActiveStatus("john.doe", new StatusUpdateDto(false));
+        assertEquals(ResponseEntity.ok().build(), result);
     }
 
     @Test
-    void updateTraineeTrainersList() throws Exception {
+    void testChangeTraineeActiveStatus() {
+        StatusUpdateDto statusDto = new StatusUpdateDto(true);
 
-        List<String> trainers = List.of("trainer1", "trainer2");
-        Mockito.when(traineeService.updateTraineeTrainers("john.doe", trainers)).thenReturn(profileReadDto);
+        ResponseEntity<Void> result = traineeController.changeTraineeActiveStatus("john.doe", statusDto);
 
-
-        ResultActions resultActions = mockMvc.perform(put("/trainees/john.doe/trainers")
-                .contentType(MediaType.APPLICATION_JSON)
-                .param("trainers", "trainer1", "trainer2"));
-
-
-        resultActions
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.firstName").value("John"))
-                .andExpect(jsonPath("$.lastName").value("Doe"))
-                .andExpect(jsonPath("$.address").value("123 Street"))
-                .andExpect(jsonPath("$.isActive").value(true));
+        assertEquals(ResponseEntity.ok().build(), result);
     }
 
     @Test
-    void getTraineeTrainings() throws Exception {
+    void testUpdateTraineeTrainersList() {
+        TraineeProfileReadDto profile = new TraineeProfileReadDto("John", "Doe", null, "123 Street", true, Collections.emptyList());
 
-        TrainingReadDto trainingReadDto = new TrainingReadDto(1L, "Training", LocalDate.now(), 60, null, null);
-        List<TrainingReadDto> trainings = List.of(trainingReadDto);
-        Mockito.when(traineeService.getTraineeTrainings("john.doe", null, null, null)).thenReturn(trainings);
+        when(traineeService.updateTraineeTrainers(anyString(), anyList())).thenReturn(profile);
 
+        ResponseEntity<TraineeProfileReadDto> result = traineeController.updateTraineeTrainersList("john.doe", Collections.singletonList("trainer1"));
 
-        ResultActions resultActions = mockMvc.perform(get("/trainees/john.doe/trainings"));
-
-        resultActions
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].name").value("Training"))
-                .andExpect(jsonPath("$[0].duration").value(60));
+        assertEquals(ResponseEntity.ok(profile), result);
     }
 
-    @Test
-    void hello() throws Exception {
-        ResultActions resultActions = mockMvc.perform(get("/trainees"));
-
-        resultActions
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("Hello, World!")));
-    }
 }

@@ -7,8 +7,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface TrainerService extends BaseService<Trainer, Long>{
-    CredentialsDto register(TrainerRegistrationDto registrationDto);
-
     TrainerProfileReadDto findTrainerByUsername(String username);
 
     TrainerProfileReadDto update(String username, TrainerCreateDto dto);
