@@ -1,0 +1,438 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="50c551dd-6cb5-410a-ba67-483848f27cff" name="Changes" comment="Added AuthenticationService">
+      <change afterPath="$PROJECT_DIR$/gym-service/src/main/java/com/vlasevsky/gym/dto/TrainerWorkloadRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gym-service/src/main/java/com/vlasevsky/gym/dto/TrainerWorkloadSummary.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gym-service/src/main/java/com/vlasevsky/gym/dto/YearlyTrainingSummary.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gym-service/src/main/java/com/vlasevsky/gym/feign/WorkLoadClient.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/work-load-service/src/main/java/com/example/workloadservice/config/H2Config.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/work-load-service/src/main/java/com/example/workloadservice/controller/TrainerWorkloadController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/work-load-service/src/main/java/com/example/workloadservice/dto/TrainerWorkloadRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/work-load-service/src/main/java/com/example/workloadservice/exception/ControllerExceptionHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/work-load-service/src/main/java/com/example/workloadservice/exception/TrainerWorkloadNotFoundException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/work-load-service/src/main/java/com/example/workloadservice/model/TrainerWorkloadSummary.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/work-load-service/src/main/java/com/example/workloadservice/model/YearlyTrainingSummary.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/work-load-service/src/main/java/com/example/workloadservice/repository/TrainerWorkloadRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/work-load-service/src/main/java/com/example/workloadservice/service/TrainerWorkloadService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mvnw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mvnw.cmd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/GymAppApplication.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/actuator/UserHealthIndicator.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/config/ApplicationConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/controller/AuthenticationController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/controller/TraineeController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/controller/TrainerController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/controller/TrainingController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/controller/TrainingTypeController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/dto/AuthenticationRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/dto/AuthenticationResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/dto/CredentialsDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/dto/RegistrationResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/dto/StatusUpdateDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/dto/TraineeCreateAndUpdateDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/dto/TraineeProfileReadDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/dto/TraineeReadDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/dto/TraineeRegistrationDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/dto/TrainerCreateDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/dto/TrainerProfileReadDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/dto/TrainerReadDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/dto/TrainerRegistrationDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/dto/TrainingCreateDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/dto/TrainingReadDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/exceptions/AuthenticationException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/exceptions/ExceptionNotFoundResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/exceptions/NotFoundException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/exceptions/RuntimeExceptionResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/exceptions/TraineeNotFoundException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/exceptions/TrainerNotFoundException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/exceptions/TrainingNotFoundException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/exceptions/TrainingTypeNotFoundException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/exceptions/UserNotFoundException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/handler/ControllerExceptionHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/handler/CustomAuthenticationEntryPoint.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/handler/CustomAuthenticationFailureHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/mapstruct/TraineeMapper.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/mapstruct/TrainerMapper.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/mapstruct/TrainingMapper.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/mapstruct/UserMapper.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/model/BaseEntity.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/model/Role.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/model/Trainee.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/model/Trainer.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/model/Training.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/model/TrainingType.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/model/User.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/repository/TraineeRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/repository/TrainerRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/repository/TrainingRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/repository/TrainingTypeRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/repository/UserRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/security/AuthenticationFailureListener.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/security/LoginAttemptService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/security/MyUserDetailsService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/security/config/JwtAuthenticationFilter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/security/config/JwtService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/security/config/SecurityConfiguration.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/service/AuthenticationService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/service/BaseService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/service/TraineeService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/service/TrainerService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/service/TrainingService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/service/TrainingTypeService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/service/UserService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/service/map/AuthenticationServiceMap.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/service/map/TraineeServiceMap.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/service/map/TrainerServiceMap.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/service/map/TrainingServiceMap.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/service/map/TrainingTypeServiceMap.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application-dev.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application-local.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application-prod.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/data/data.sql" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/data/schema.sql" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/messages.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/sql/data.sql" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/sql/schema.sql" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/vlasevsky/gym/GymAppApplicationTests.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/vlasevsky/gym/controller/AuthenticationControllerTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/vlasevsky/gym/controller/TraineeControllerTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/vlasevsky/gym/controller/TrainingControllerTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/vlasevsky/gym/controller/TrainingTypeControllerTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/vlasevsky/gym/service/map/AuthenticationServiceMapTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/vlasevsky/gym/service/map/TraineeServiceMapTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/vlasevsky/gym/service/map/TrainerServiceMapTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/vlasevsky/gym/service/map/TrainingServiceMapTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/vlasevsky/gym/service/map/TrainingTypeServiceMapTest.java" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JUnit5 Test Class" />
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="useMavenConfig" value="true" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectId" id="2gQUtfF1yfgAG2h54RwWMhUL9bg" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+    <option name="showMembers" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
+    "jdk.selected.JAVA_MODULE": "17",
+    "last_opened_file_path": "C:/Users/bv/Documents/study/Study/code/Study/epam/spring-boot/epam-spring-boot/gym-service/src/main/java/com/vlasevsky/gym/dto",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "spring.configuration.checksum": "f30de18646b671f46a5ce52a3de0cefc"
+  },
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "postgresql",
+      "h2"
+    ]
+  }
+}]]></component>
+  <component name="ReactorSettings">
+    <option name="notificationShown" value="true" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="com.example.workloadservice.model" />
+      <recent name="com.example.workloadservice.dto" />
+      <recent name="com.vlasevsky.gym.dto" />
+      <recent name="com.vlasevsky.gym.config" />
+      <recent name="com.vlasevsky.gym.model" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\bv\Documents\study\Study\code\Study\epam\spring-boot\epam-spring-boot\gym-service\src\main\java\com\vlasevsky\gym\dto" />
+    </key>
+    <key name="CreateTestDialog.Recents.Supers">
+      <recent name="" />
+    </key>
+    <key name="CreateTestDialog.RecentsKey">
+      <recent name="com.vlasevsky.gym.controller" />
+      <recent name="com.vlasevsky.gym.service.map" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.example.workloadservice.exception" />
+      <recent name="com.vlasevsky.gym.dto" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="configurationTypes">
+      <set>
+        <option value="SpringBootApplicationConfigurationType" />
+      </set>
+    </option>
+  </component>
+  <component name="RunManager" selected="Spring Boot.GymAppApplication">
+    <configuration name="Unnamed" type="Application" factoryName="Application" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.vlasevsky.gym.GymAppApplication" />
+      <module name="gym-app" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="All in gym-app (1)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="gym-app" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="TEST_OBJECT" value="package" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="All in gym-app" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="gym-app" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="TEST_OBJECT" value="package" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TrainingTypeControllerTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="gym-app" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.vlasevsky.gym.controller.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.vlasevsky.gym.controller" />
+      <option name="MAIN_CLASS_NAME" value="com.vlasevsky.gym.controller.TrainingTypeControllerTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="com.vlasevsky.gym.controller in gym-app" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="gym-app" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.vlasevsky.gym.controller.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.vlasevsky.gym.controller" />
+      <option name="TEST_OBJECT" value="package" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="gym-app" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="gym-app" />
+      <option name="filePath" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="GymAppApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <module name="gym-app" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.vlasevsky.gym.GymAppApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.vlasevsky.gym.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ServiceRegistryApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true">
+      <module name="ServiceRegistry" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.epam.gym.registry.ServiceRegistryApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="WorkLoadServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+      <module name="work-load-service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.workloadservice.WorkLoadServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Application.Unnamed" />
+      <item itemvalue="JUnit.All in gym-app (1)" />
+      <item itemvalue="JUnit.All in gym-app" />
+      <item itemvalue="JUnit.com.vlasevsky.gym.controller in gym-app" />
+      <item itemvalue="JUnit.TrainingTypeControllerTest" />
+      <item itemvalue="Spring Boot.WorkLoadServiceApplication" />
+      <item itemvalue="Spring Boot.ServiceRegistryApplication" />
+      <item itemvalue="Spring Boot.GymAppApplication" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Spring Boot.GymAppApplication" />
+        <item itemvalue="Spring Boot.ServiceRegistryApplication" />
+        <item itemvalue="JUnit.All in gym-app (1)" />
+        <item itemvalue="JUnit.All in gym-app" />
+        <item itemvalue="JUnit.com.vlasevsky.gym.controller in gym-app" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="50c551dd-6cb5-410a-ba67-483848f27cff" name="Changes" comment="" />
+      <created>1715629512769</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1715629512769</updated>
+      <workItem from="1715629514803" duration="1051000" />
+      <workItem from="1716155469311" duration="31555000" />
+      <workItem from="1717591809715" duration="1960000" />
+      <workItem from="1719182798715" duration="646000" />
+      <workItem from="1719325200842" duration="2666000" />
+      <workItem from="1719681644162" duration="13838000" />
+      <workItem from="1719777675748" duration="11286000" />
+      <workItem from="1720004182481" duration="11709000" />
+      <workItem from="1720135423619" duration="8260000" />
+      <workItem from="1722118928143" duration="10313000" />
+      <workItem from="1723568792139" duration="1230000" />
+      <workItem from="1723570047754" duration="19812000" />
+      <workItem from="1723716778145" duration="2878000" />
+    </task>
+    <task id="LOCAL-00001" summary="refactoring">
+      <created>1715630115621</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1715630115621</updated>
+    </task>
+    <task id="LOCAL-00002" summary="add security infrastructure">
+      <created>1720165161416</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1720165161416</updated>
+    </task>
+    <task id="LOCAL-00003" summary="AuthenticationService">
+      <created>1720385247458</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1720385247458</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Added AuthenticationService">
+      <created>1720385327966</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1720385327966</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="refactoring" />
+    <MESSAGE value="add security infrastructure" />
+    <MESSAGE value="AuthenticationService" />
+    <MESSAGE value="Added AuthenticationService" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added AuthenticationService" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/service/map/AuthenticationServiceMap.java</url>
+          <line>120</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/security/config/SecurityConfiguration.java</url>
+          <line>72</line>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/security/AuthenticationFailureListener.java</url>
+          <line>20</line>
+          <option name="timeStamp" value="8" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/handler/CustomAuthenticationFailureHandler.java</url>
+          <line>35</line>
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/security/MyUserDetailsService.java</url>
+          <line>26</line>
+          <option name="timeStamp" value="10" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/security/config/JwtAuthenticationFilter.java</url>
+          <line>34</line>
+          <option name="timeStamp" value="11" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/work-load-service/src/main/java/com/example/workloadservice/service/TrainerWorkloadService.java</url>
+          <line>109</line>
+          <option name="timeStamp" value="14" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>
