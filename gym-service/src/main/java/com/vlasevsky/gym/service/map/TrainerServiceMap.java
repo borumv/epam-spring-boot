@@ -1,9 +1,10 @@
 package com.vlasevsky.gym.service.map;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vlasevsky.gym.config.JmsConstants;
 import com.vlasevsky.gym.dto.*;
-import com.vlasevsky.gym.exceptions.AuthenticationException;
 import com.vlasevsky.gym.exceptions.TrainerNotFoundException;
-import com.vlasevsky.gym.feign.WorkLoadClient;
 import com.vlasevsky.gym.mapstruct.TraineeMapper;
 import com.vlasevsky.gym.mapstruct.TrainerMapper;
 import com.vlasevsky.gym.mapstruct.TrainingMapper;
@@ -14,14 +15,20 @@ import com.vlasevsky.gym.repository.TrainerRepository;
 import com.vlasevsky.gym.repository.TrainingRepository;
 import com.vlasevsky.gym.repository.TrainingTypeRepository;
 import com.vlasevsky.gym.service.TrainerService;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.TextMessage;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.activemq.command.ActiveMQQueue;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -36,7 +43,7 @@ public class TrainerServiceMap implements TrainerService {
     private final TraineeMapper traineeMapper;
     private final TrainingMapper trainingMapper;
 
-    private final WorkLoadClient workLoadClient;
+    private JmsTemplate jmsTemplate;
     @Transactional
     @Override
     public TrainerProfileReadDto findTrainerByUsername(String username) {
@@ -128,6 +135,7 @@ public class TrainerServiceMap implements TrainerService {
         return trainerDtos;
     }
 
+    @Override
     public void updateTrainerWorkload(TrainerWorkloadRequest request) {
         String username = request.getUsername();
         trainerRepository.findByUsername(username)
@@ -135,16 +143,50 @@ public class TrainerServiceMap implements TrainerService {
                     log.warn("Trainer not found with username: {}", username);
                     return new TrainerNotFoundException(username);
                 });
-        // Вызов метода другого микросервиса
-        workLoadClient.updateWorkload(request);
+        jmsTemplate.convertAndSend(JmsConstants.WORKLOAD_QUEUE, request);
     }
 
+    @Override
     public TrainerWorkloadSummary getTrainerWorkload(String username, int year, int month) {
-        trainerRepository.findByUsername(username)
-                .orElseThrow(() -> {
-                    log.warn("Trainer not found with username: {}", username);
-                    return new TrainerNotFoundException(username);
-                });
-        return workLoadClient.getWorkload(username, year, month).getBody();
+        Map<String, Object> requestPayload = createRequestPayload(username, year, month);
+        MessageCreator messageCreator = createMessageCreator(requestPayload);
+
+        jmsTemplate.send(JmsConstants.WORKLOAD_REQUEST_QUEUE, messageCreator);
+
+        return receiveAndProcessResponse()
+                .orElse(new TrainerWorkloadSummary());
+    }
+
+    private Map<String, Object> createRequestPayload(String username, int year, int month) {
+        Map<String, Object> requestPayload = new HashMap<>();
+        requestPayload.put("username", username);
+        requestPayload.put("year", year);
+        requestPayload.put("month", month);
+        return requestPayload;
+    }
+
+    private MessageCreator createMessageCreator(Map<String, Object> requestPayload) {
+        return session -> {
+            Message message = session.createObjectMessage((Serializable) requestPayload);
+            message.setJMSReplyTo(new ActiveMQQueue(JmsConstants.WORKLOAD_RESPONSE_QUEUE));
+            return message;
+        };
+    }
+
+    private Optional<TrainerWorkloadSummary> receiveAndProcessResponse() {
+        Message response = jmsTemplate.receive(JmsConstants.WORKLOAD_RESPONSE_QUEUE);
+
+        if (response instanceof TextMessage) {
+            try {
+                String jsonSummary = ((TextMessage) response).getText();
+                TrainerWorkloadSummary summary = new ObjectMapper().readValue(jsonSummary, TrainerWorkloadSummary.class);
+                log.info("Received summary: {}", summary);
+                return Optional.of(summary);
+            } catch (JMSException | JsonProcessingException e) {
+                log.error("Error processing response message", e);
+            }
+        }
+
+        return Optional.empty();
     }
 }
