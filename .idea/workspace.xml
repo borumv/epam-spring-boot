@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="50c551dd-6cb5-410a-ba67-483848f27cff" name="Changes" comment="Added Microservice flows&#10;1.Registry Service - This is where the Eureka Server is hosted.&#10;2.Gym Service - This is the main application from which the calls to 3 microservices are made via the Eureka Client.&#10;3.Work-load Service - This service is responsible for calculating the trainer's workload broken down by months and years. The data is stored in an H2 database.">
+      <change afterPath="$PROJECT_DIR$/gym-service/src/main/java/com/vlasevsky/gym/config/ActiveMQConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gym-service/src/main/java/com/vlasevsky/gym/config/JmsConstants.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/work-load-service/src/main/java/com/example/workloadservice/config/JmsConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/work-load-service/src/main/java/com/example/workloadservice/config/JmsConstants.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/work-load-service/src/main/java/com/example/workloadservice/mq/TrainerWorkloadListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/gym-service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym-service/src/main/java/com/vlasevsky/gym/GymAppApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/gym-service/src/main/java/com/vlasevsky/gym/GymAppApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym-service/src/main/java/com/vlasevsky/gym/dto/TrainerWorkloadRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/gym-service/src/main/java/com/vlasevsky/gym/dto/TrainerWorkloadRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym-service/src/main/java/com/vlasevsky/gym/feign/WorkLoadClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/gym-service/src/main/java/com/vlasevsky/gym/feign/WorkLoadClient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym-service/src/main/java/com/vlasevsky/gym/service/map/TrainerServiceMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/gym-service/src/main/java/com/vlasevsky/gym/service/map/TrainerServiceMap.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gym-service/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/work-load-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/work-load-service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/work-load-service/src/main/java/com/example/workloadservice/dto/TrainerWorkloadRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/work-load-service/src/main/java/com/example/workloadservice/dto/TrainerWorkloadRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/work-load-service/src/main/java/com/example/workloadservice/model/TrainerWorkloadSummary.java" beforeDir="false" afterPath="$PROJECT_DIR$/work-load-service/src/main/java/com/example/workloadservice/model/TrainerWorkloadSummary.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/work-load-service/src/main/java/com/example/workloadservice/model/YearlyTrainingSummary.java" beforeDir="false" afterPath="$PROJECT_DIR$/work-load-service/src/main/java/com/example/workloadservice/model/YearlyTrainingSummary.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/work-load-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/work-load-service/src/main/resources/application.properties" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JUnit5 Test Class" />
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="useMavenConfig" value="true" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectId" id="2gQUtfF1yfgAG2h54RwWMhUL9bg" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+    <option name="showMembers" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit5&quot;,
+    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5&quot;: &quot;&quot;,
+    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;17&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/bv/Documents/study/Study/code/Study/epam/spring-boot/epam-spring-boot/broker-service&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;spring.configuration.checksum&quot;: &quot;f30de18646b671f46a5ce52a3de0cefc&quot;
+  },
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;postgresql&quot;,
+      &quot;h2&quot;
+    ]
+  }
+}</component>
+  <component name="ReactorSettings">
+    <option name="notificationShown" value="true" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="com.example.workloadservice.model" />
+      <recent name="com.example.workloadservice.dto" />
+      <recent name="com.vlasevsky.gym.dto" />
+      <recent name="com.vlasevsky.gym.config" />
+      <recent name="com.vlasevsky.gym.model" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\bv\Documents\study\Study\code\Study\epam\spring-boot\epam-spring-boot\gym-service\src\main\java\com\vlasevsky\gym\dto" />
+    </key>
+    <key name="CreateTestDialog.Recents.Supers">
+      <recent name="" />
+    </key>
+    <key name="CreateTestDialog.RecentsKey">
+      <recent name="com.vlasevsky.gym.controller" />
+      <recent name="com.vlasevsky.gym.service.map" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.example.workloadservice.exception" />
+      <recent name="com.vlasevsky.gym.dto" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="configurationTypes">
+      <set>
+        <option value="SpringBootApplicationConfigurationType" />
+      </set>
+    </option>
+  </component>
+  <component name="RunManager" selected="Spring Boot.WorkLoadServiceApplication">
+    <configuration name="Unnamed" type="Application" factoryName="Application" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.vlasevsky.gym.GymAppApplication" />
+      <module name="gym-app" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="All in gym-app (1)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="gym-app" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="TEST_OBJECT" value="package" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="All in gym-app" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="gym-app" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="TEST_OBJECT" value="package" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TrainingTypeControllerTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="gym-app" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.vlasevsky.gym.controller.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.vlasevsky.gym.controller" />
+      <option name="MAIN_CLASS_NAME" value="com.vlasevsky.gym.controller.TrainingTypeControllerTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="com.vlasevsky.gym.controller in gym-app" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="gym-app" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.vlasevsky.gym.controller.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.vlasevsky.gym.controller" />
+      <option name="TEST_OBJECT" value="package" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="gym-app" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="gym-app" />
+      <option name="filePath" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="BrokerServerApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+      <module name="broker-server" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.brokerserver.BrokerServerApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="BrokerServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+      <module name="broker-service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.brokerservice.BrokerServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="GymAppApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <module name="gym-app" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.vlasevsky.gym.GymAppApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.vlasevsky.gym.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ServiceRegistryApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true">
+      <module name="ServiceRegistry" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.epam.gym.registry.ServiceRegistryApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="WorkLoadServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+      <module name="work-load-service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.workloadservice.WorkLoadServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Application.Unnamed" />
+      <item itemvalue="JUnit.All in gym-app (1)" />
+      <item itemvalue="JUnit.All in gym-app" />
+      <item itemvalue="JUnit.com.vlasevsky.gym.controller in gym-app" />
+      <item itemvalue="JUnit.TrainingTypeControllerTest" />
+      <item itemvalue="Spring Boot.BrokerServerApplication" />
+      <item itemvalue="Spring Boot.BrokerServiceApplication" />
+      <item itemvalue="Spring Boot.WorkLoadServiceApplication" />
+      <item itemvalue="Spring Boot.GymAppApplication" />
+      <item itemvalue="Spring Boot.ServiceRegistryApplication" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Spring Boot.ServiceRegistryApplication" />
+        <item itemvalue="Spring Boot.GymAppApplication" />
+        <item itemvalue="JUnit.All in gym-app (1)" />
+        <item itemvalue="JUnit.All in gym-app" />
+        <item itemvalue="JUnit.com.vlasevsky.gym.controller in gym-app" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="50c551dd-6cb5-410a-ba67-483848f27cff" name="Changes" comment="" />
+      <created>1715629512769</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1715629512769</updated>
+      <workItem from="1715629514803" duration="1051000" />
+      <workItem from="1716155469311" duration="31555000" />
+      <workItem from="1717591809715" duration="1960000" />
+      <workItem from="1719182798715" duration="646000" />
+      <workItem from="1719325200842" duration="2666000" />
+      <workItem from="1719681644162" duration="13838000" />
+      <workItem from="1719777675748" duration="11286000" />
+      <workItem from="1720004182481" duration="11709000" />
+      <workItem from="1720135423619" duration="8260000" />
+      <workItem from="1722118928143" duration="10313000" />
+      <workItem from="1723568792139" duration="1230000" />
+      <workItem from="1723570047754" duration="19812000" />
+      <workItem from="1723716778145" duration="6146000" />
+      <workItem from="1723845188611" duration="1908000" />
+      <workItem from="1724007047625" duration="6010000" />
+      <workItem from="1724274009499" duration="4198000" />
+      <workItem from="1724406741718" duration="5685000" />
+      <workItem from="1724536926294" duration="18175000" />
+    </task>
+    <task id="LOCAL-00001" summary="refactoring">
+      <created>1715630115621</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1715630115621</updated>
+    </task>
+    <task id="LOCAL-00002" summary="add security infrastructure">
+      <created>1720165161416</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1720165161416</updated>
+    </task>
+    <task id="LOCAL-00003" summary="AuthenticationService">
+      <created>1720385247458</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1720385247458</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Added AuthenticationService">
+      <created>1720385327966</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1720385327966</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Added Microservice flows&#10;1.Registry Service - This is where the Eureka Server is hosted.&#10;2.Gym Service - This is the main application from which the calls to 3 microservices are made via the Eureka Client.&#10;3.Work-load Service - This service is responsible for calculating the trainer's workload broken down by months and years. The data is stored in an H2 database.">
+      <created>1723719875710</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1723719875710</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="refactoring" />
+    <MESSAGE value="add security infrastructure" />
+    <MESSAGE value="AuthenticationService" />
+    <MESSAGE value="Added AuthenticationService" />
+    <MESSAGE value="Added Microservice flows&#10;1.Registry Service - This is where the Eureka Server is hosted.&#10;2.Gym Service - This is the main application from which the calls to 3 microservices are made via the Eureka Client.&#10;3.Work-load Service - This service is responsible for calculating the trainer's workload broken down by months and years. The data is stored in an H2 database." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added Microservice flows&#10;1.Registry Service - This is where the Eureka Server is hosted.&#10;2.Gym Service - This is the main application from which the calls to 3 microservices are made via the Eureka Client.&#10;3.Work-load Service - This service is responsible for calculating the trainer's workload broken down by months and years. The data is stored in an H2 database." />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/service/map/AuthenticationServiceMap.java</url>
+          <line>120</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/security/config/SecurityConfiguration.java</url>
+          <line>72</line>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/security/AuthenticationFailureListener.java</url>
+          <line>20</line>
+          <option name="timeStamp" value="8" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/handler/CustomAuthenticationFailureHandler.java</url>
+          <line>35</line>
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/security/MyUserDetailsService.java</url>
+          <line>26</line>
+          <option name="timeStamp" value="10" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/vlasevsky/gym/security/config/JwtAuthenticationFilter.java</url>
+          <line>34</line>
+          <option name="timeStamp" value="11" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/work-load-service/src/main/java/com/example/workloadservice/service/TrainerWorkloadService.java</url>
+          <line>109</line>
+          <option name="timeStamp" value="14" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/work-load-service/src/main/java/com/example/workloadservice/WorkLoadServiceApplication.java</url>
+          <line>6</line>
+          <option name="timeStamp" value="15" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>
