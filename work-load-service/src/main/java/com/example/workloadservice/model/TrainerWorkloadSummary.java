@@ -20,7 +20,7 @@ public class TrainerWorkloadSummary {
     private String lastName;
     private Boolean isActive;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "trainer_workload_id")
     private List<YearlyTrainingSummary> yearlySummaries;
 }

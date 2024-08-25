@@ -4,12 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TrainerWorkloadRequest {
+public class TrainerWorkloadRequest implements Serializable {
     private String username;
     private String firstName;
     private String lastName;

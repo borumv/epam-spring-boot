@@ -18,7 +18,7 @@ public class YearlyTrainingSummary {
     @Column(name = "training_year")
     private Integer trainingYear;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "monthly_training_summary", joinColumns = @JoinColumn(name = "yearly_summary_id"))
     @MapKeyColumn(name = "training_month")
     @Column(name = "training_duration")
