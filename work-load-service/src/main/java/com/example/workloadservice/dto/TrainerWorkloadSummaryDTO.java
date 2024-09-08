@@ -1,16 +1,15 @@
-package com.vlasevsky.gym.dto;
+package com.example.workloadservice.dto;
 
-import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
-public class TrainerWorkloadSummary {
+public class TrainerWorkloadSummaryDTO {
     private String id;
     private String username;
     private String firstName;
     private String lastName;
     private Boolean isActive;
-    private List<YearlyTrainingSummary> yearlySummaries;
+    private List<YearlyTrainingSummaryDTO> yearlySummaries;
 }

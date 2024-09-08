@@ -1,8 +1,17 @@
 package com.example.workloadservice.repository;
 
 import com.example.workloadservice.model.TrainerWorkloadSummary;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
 
-public interface TrainerWorkloadRepository extends JpaRepository<TrainerWorkloadSummary, Long> {
-    TrainerWorkloadSummary findByUsername(String username);
+import java.util.List;
+import java.util.Optional;
+
+@Repository
+public interface TrainerWorkloadRepository extends MongoRepository<TrainerWorkloadSummary, String> {
+
+    Optional<TrainerWorkloadSummary> findByUsername(String username);
+
+    // Дополнительные методы поиска по имени и фамилии для индексации
+    List<TrainerWorkloadSummary> findByFirstNameAndLastName(String firstName, String lastName);
 }

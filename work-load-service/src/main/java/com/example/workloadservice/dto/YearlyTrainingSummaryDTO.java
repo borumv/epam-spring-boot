@@ -1,14 +1,11 @@
-package com.vlasevsky.gym.dto;
+package com.example.workloadservice.dto;
 
-import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Data
-public class YearlyTrainingSummary {
-
+public class YearlyTrainingSummaryDTO {
     private Integer trainingYear;
     private Map<Integer, Integer> monthlySummary;
 }
