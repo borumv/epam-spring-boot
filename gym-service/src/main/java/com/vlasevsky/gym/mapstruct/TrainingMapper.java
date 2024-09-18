@@ -7,11 +7,12 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import java.util.List;
+import java.util.Set;
 
 @Mapper(componentModel = "spring", uses = {TrainerMapper.class, TraineeMapper.class} )
 public interface TrainingMapper {
     TrainingReadDto toDto(Training training);
-    List<TrainingReadDto> toDTOList(List<Training> trainings);
+    Set<TrainingReadDto> toDTOList(Set<Training> trainings);
 
     @Mapping(target = "trainee", ignore = true)
     @Mapping(target = "trainer", ignore = true)

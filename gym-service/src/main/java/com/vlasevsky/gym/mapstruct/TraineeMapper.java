@@ -29,7 +29,6 @@ public interface TraineeMapper {
     Trainee toEntity(TraineeRegistrationDto dto);
 
     TraineeCreateAndUpdateDto toCreateAndUpdateDto(TraineeRegistrationDto registrationDto);
-
     @Mapping(target = "trainers", expression = "java(new java.util.ArrayList<>())")
     TraineeProfileReadDto toTraineeProfileDto(Trainee trainee);
 

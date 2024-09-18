@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -81,7 +82,7 @@ public class TrainerServiceMap implements TrainerService {
         trainer.setFirstName(dto.firstName());
         trainer.setLastName(dto.lastName());
         trainer.setIsActive(dto.isActive());
-        List<TrainingType> specializations = trainingTypeRepository.findByNames(dto.specializations());
+        Set<TrainingType> specializations = trainingTypeRepository.findByNames(dto.specializations());
         trainer.setSpecializations(specializations);
         trainerRepository.save(trainer);
         log.info("Trainer with username: {} updated successfully", username);
@@ -90,10 +91,10 @@ public class TrainerServiceMap implements TrainerService {
 
     @Transactional
     @Override
-    public List<TrainerReadDto> findAll() {
+    public Set<TrainerReadDto> findAll() {
         log.info("Finding all trainers");
         List<Trainer> trainers = trainerRepository.findAll();
-        List<TrainerReadDto> trainerDtos = trainerMapper.toDTOList(trainers);
+        Set<TrainerReadDto> trainerDtos = trainerMapper.toDTOList(Set.copyOf(trainers));
         log.info("Found {} trainers", trainerDtos.size());
         return trainerDtos;
     }
@@ -114,20 +115,20 @@ public class TrainerServiceMap implements TrainerService {
 
     @Transactional
     @Override
-    public List<TrainingReadDto> getTrainerTrainings(String trainerUsername, LocalDateTime fromDate, LocalDateTime toDate, String traineeName) {
+    public Set<TrainingReadDto> getTrainerTrainings(String trainerUsername, LocalDateTime fromDate, LocalDateTime toDate, String traineeName) {
         log.info("Fetching trainings for trainer with username: {} from {} to {}", trainerUsername, fromDate, toDate);
-        List<Training> trainings = trainingRepository.findTrainingsByTrainerAndPeriodAndTrainee(trainerUsername, fromDate, toDate, traineeName);
-        List<TrainingReadDto> trainingDtos = trainingMapper.toDTOList(trainings);
+        Set<Training> trainings = trainingRepository.findTrainingsByTrainerAndPeriodAndTrainee(trainerUsername, fromDate, toDate, traineeName);
+        Set<TrainingReadDto> trainingDtos = trainingMapper.toDTOList(trainings);
         log.info("Found {} trainings", trainingDtos.size());
         return trainingDtos;
     }
 
     @Transactional
     @Override
-    public List<TrainerReadDto> getTrainersNotAssignedToTrainee(String traineeUsername) {
+    public Set<TrainerReadDto> getTrainersNotAssignedToTrainee(String traineeUsername) {
         log.info("Finding trainers not assigned to trainee with username: {}", traineeUsername);
-        List<Trainer> trainers = trainerRepository.findTrainersNotAssignedToTrainee(traineeUsername);
-        List<TrainerReadDto> trainerDtos = trainerMapper.toDTOList(trainers);
+        Set<Trainer> trainers = trainerRepository.findTrainersNotAssignedToTrainee(traineeUsername);
+        Set<TrainerReadDto> trainerDtos = trainerMapper.toDTOList(trainers);
         log.info("Found {} trainers not assigned to trainee", trainerDtos.size());
         return trainerDtos;
     }

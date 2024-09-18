@@ -12,6 +12,7 @@ import com.vlasevsky.gym.model.Training;
 import com.vlasevsky.gym.repository.TraineeRepository;
 import com.vlasevsky.gym.repository.TrainerRepository;
 import com.vlasevsky.gym.repository.TrainingRepository;
+import com.vlasevsky.gym.repository.UserRepository;
 import com.vlasevsky.gym.service.TraineeService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,10 +21,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
 @AllArgsConstructor
+
 public class TraineeServiceMap implements TraineeService {
 
     private final TraineeRepository traineeRepository;
@@ -33,20 +36,26 @@ public class TraineeServiceMap implements TraineeService {
     private final TrainingMapper trainingMapper;
     private final TrainerMapper trainerMapper;
 
+    private final UserRepository userRepository;
+
     @Transactional
     @Override
     public void delete(String username) {
         log.info("Deleting trainee: {}", username);
+
         Trainee trainee = traineeRepository.findByUsername(username)
-                .orElseThrow(() -> {
-                    log.warn("Trainee with username: {} not found", username);
-                    return new TraineeNotFoundException(username);
-                });
+                .orElseThrow(() -> new TraineeNotFoundException(username));
+
+        userRepository.deleteById(trainee.getId());
+
+        trainingRepository.deleteAllByTrainee(trainee);
+
         trainee.getTrainers().forEach(trainer -> trainer.getTrainees().remove(trainee));
-        trainee.getTrainings().clear();
 
         traineeRepository.deleteById(trainee.getId());
-        log.info("Trainee {} deleted successfully", username);
+
+
+        log.info("Trainee {} and corresponding user deleted successfully", username);
     }
 
     @Transactional
@@ -65,10 +74,10 @@ public class TraineeServiceMap implements TraineeService {
 
     @Transactional
     @Override
-    public List<TrainingReadDto> getTraineeTrainings(String trainerUsername, LocalDateTime from, LocalDateTime to, String traineeName) {
+    public Set<TrainingReadDto> getTraineeTrainings(String trainerUsername, LocalDateTime from, LocalDateTime to, String traineeName) {
         log.info("Fetching trainings for trainee: {} with trainer: {} from {} to {}", traineeName, trainerUsername, from, to);
-        List<Training> trainings = trainingRepository.findTrainingsByTraineeAndPeriodAndTrainer(trainerUsername, from, to, traineeName);
-        List<TrainingReadDto> trainingDtos = trainingMapper.toDTOList(trainings);
+        Set<Training> trainings = trainingRepository.findTrainingsByTraineeAndPeriodAndTrainer(trainerUsername, from, to, traineeName);
+        Set<TrainingReadDto> trainingDtos = trainingMapper.toDTOList(trainings);
         log.info("Found {} trainings", trainingDtos.size());
         return trainingDtos;
     }
@@ -90,7 +99,7 @@ public class TraineeServiceMap implements TraineeService {
         trainee.setIsActive(dto.isActive());
         traineeRepository.save(trainee);
 
-        List<TrainerReadDto> trainers = trainerMapper.toDTOList(trainee.getTrainers());
+        Set<TrainerReadDto> trainers = trainerMapper.toDTOList(trainee.getTrainers());
         TraineeProfileReadDto updatedProfile = traineeMapper.toTraineeProfileDto(trainee);
         updatedProfile.trainers().addAll(trainers);
 
@@ -108,7 +117,7 @@ public class TraineeServiceMap implements TraineeService {
                     return new UserNotFoundException(username);
                 });
 
-        List<TrainerReadDto> trainers = trainerMapper.toDTOList(trainee.getTrainers());
+        Set<TrainerReadDto> trainers = trainerMapper.toDTOList(trainee.getTrainers());
         TraineeProfileReadDto traineeProfileReadDto = traineeMapper.toTraineeProfileDto(trainee);
         traineeProfileReadDto.trainers().addAll(trainers);
         log.info("Trainee found: {}", traineeProfileReadDto);
@@ -124,7 +133,7 @@ public class TraineeServiceMap implements TraineeService {
                     return new TraineeNotFoundException(username);
                 });
 
-        List<Trainer> trainers = trainerRepository.findAllTrainersByUsername(trainerUsernames);
+        Set<Trainer> trainers = trainerRepository.findAllTrainersByUsername(trainerUsernames);
         trainee.setTrainers(trainers);
         traineeRepository.save(trainee);
         log.info("Trainers updated for trainee: {}", username);

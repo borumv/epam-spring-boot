@@ -37,25 +37,6 @@ public class TrainingServiceMap implements TrainingService {
     private final TrainingTypeRepository trainingTypeRepository;
 
     @Transactional
-    public Training create(Training training, CredentialsDto credentialsDto) {
-        log.info("Creating new training with credentials: {}", credentialsDto.username());
-        Training savedTraining = trainingRepository.save(training);
-        log.info("Training saved successfully: {}", savedTraining);
-        return savedTraining;
-    }
-
-    @Transactional
-    public boolean delete(Long id, CredentialsDto credentialsDto) {
-        log.info("Deleting training with ID: {} using credentials: {}", id, credentialsDto.username());
-        Optional<Training> maybeTraining = trainingRepository.findById(id);
-        maybeTraining.ifPresent(training -> {
-            trainingRepository.delete(training);
-            log.info("Training with ID: {} deleted successfully", id);
-        });
-        return maybeTraining.isPresent();
-    }
-
-    @Transactional
     @Override
     public void create(TrainingCreateDto createDto) {
         log.info("Creating training with trainee username: {} and trainer username: {}", createDto.traineeUsername(), createDto.trainerUsername());

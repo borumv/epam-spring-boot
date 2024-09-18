@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/trainers")
@@ -25,7 +26,7 @@ public class TrainerController {
     private AuthenticationService authenticationService;
 
     @GetMapping
-    public List<TrainerReadDto> getTrainers(@RequestParam(required = false) String unassignedTraineeUsername) {
+    public Set<TrainerReadDto> getTrainers(@RequestParam(required = false) String unassignedTraineeUsername) {
         if (unassignedTraineeUsername != null) {
             return trainerService.getTrainersNotAssignedToTrainee(unassignedTraineeUsername);
         }

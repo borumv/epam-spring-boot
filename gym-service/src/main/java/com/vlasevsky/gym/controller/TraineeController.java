@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/trainees")
@@ -67,12 +68,12 @@ public class TraineeController {
     }
 
     @GetMapping("/{username}/trainings")
-    public ResponseEntity<List<TrainingReadDto>> getTraineeTrainings(
+    public ResponseEntity<Set<TrainingReadDto>> getTraineeTrainings(
             @PathVariable String username,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to,
             @RequestParam(required = false) String trainerName) {
-        List<TrainingReadDto> trainings = traineeService.getTraineeTrainings(username, from, to, trainerName);
+        Set<TrainingReadDto> trainings = traineeService.getTraineeTrainings(username, from, to, trainerName);
         return ResponseEntity.ok(trainings);
     }
 
