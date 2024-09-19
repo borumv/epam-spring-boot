@@ -46,14 +46,13 @@ public class TraineeServiceMap implements TraineeService {
         Trainee trainee = traineeRepository.findByUsername(username)
                 .orElseThrow(() -> new TraineeNotFoundException(username));
 
-        userRepository.deleteById(trainee.getId());
-
         trainingRepository.deleteAllByTrainee(trainee);
 
         trainee.getTrainers().forEach(trainer -> trainer.getTrainees().remove(trainee));
 
         traineeRepository.deleteById(trainee.getId());
 
+        userRepository.deleteById(trainee.getId());
 
         log.info("Trainee {} and corresponding user deleted successfully", username);
     }

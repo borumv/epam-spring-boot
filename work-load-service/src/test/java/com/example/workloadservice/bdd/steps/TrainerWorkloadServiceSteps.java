@@ -28,10 +28,8 @@ import static org.mockito.Mockito.verify;
 @SpringBootTest
 @CucumberContextConfiguration
 public class TrainerWorkloadServiceSteps {
-
     @Mock
     private TrainerWorkloadRepository repository;
-
     @InjectMocks
     private TrainerWorkloadServiceMap service;
 
@@ -43,7 +41,6 @@ public class TrainerWorkloadServiceSteps {
         MockitoAnnotations.openMocks(this);
     }
 
-    // Соответствует шагу: Given a trainer workload request with username "trainer1" and training duration "60"
     @Given("a trainer workload request with username {string} and training duration {int}")
     public void aTrainerWorkloadRequest(String username, int duration) {
         request = new TrainerWorkloadRequest();
@@ -72,13 +69,10 @@ public class TrainerWorkloadServiceSteps {
         Mockito.when(repository.findByUsername(username)).thenReturn(Optional.of(summary));
     }
 
-    // Соответствует шагу: Given a non-existent trainer with username "missing_trainer"
-    @Given("a non-existent trainer with username {string}")
+   @Given("a non-existent trainer with username {string}")
     public void aNonExistentTrainer(String username) {
         Mockito.when(repository.findByUsername(username)).thenReturn(Optional.empty());
     }
-
-    // Соответствует шагу: Given a workload summary for trainer "trainer1" for year "2023"
     @Given("a workload summary for trainer {string} for year {int}")
     public void aWorkloadSummary(String username, int year) {
         summary = new TrainerWorkloadSummary();
@@ -96,21 +90,18 @@ public class TrainerWorkloadServiceSteps {
         Mockito.when(repository.findByUsername(username)).thenReturn(Optional.of(summary));
     }
 
-    // Соответствует шагу: When I retrieve the yearly workload for trainer "trainer1" for year "2023"
     @When("I retrieve the yearly workload for trainer {string} for year {int}")
     public void retrieveYearlyWorkload(String username, int year) {
         Mockito.when(repository.findByUsername(username)).thenReturn(Optional.of(summary));
         service.getWorkload(username, year, 0);
     }
 
-    // Соответствует шагу: When I retrieve the workload for trainer "missing_trainer" for year "2023"
     @When("I retrieve the workload for trainer {string} for year {int}")
     public void retrieveWorkloadForTrainer(String username, int year) {
         Mockito.when(repository.findByUsername(username)).thenReturn(Optional.empty());
         service.getWorkload(username, year, 0);
     }
 
-    // Соответствует шагу: When the workload is updated
     @When("the workload is updated")
     public void updateWorkload() {
         Mockito.when(repository.findByUsername(request.getUsername())).thenReturn(Optional.of(summary));
@@ -118,19 +109,16 @@ public class TrainerWorkloadServiceSteps {
         verify(repository).save(summary);
     }
 
-    // Соответствует шагу: Then the workload should be saved
     @Then("the workload should be saved")
     public void verifyWorkloadSaved() {
         verify(repository).save(summary);
     }
 
-    // Соответствует шагу: Then an error should be thrown for missing trainer
     @Then("an error should be thrown for missing trainer")
     public void verifyTrainerNotFoundError() {
         assertThrows(TrainerWorkloadNotFoundException.class, () -> service.getWorkload(request.getUsername(), 2023, 0));
     }
 
-    // Соответствует шагу: Then the yearly workload should be returned
     @Then("the yearly workload should be returned")
     public void verifyYearlyWorkload() {
         verify(repository).findByUsername(summary.getUsername());

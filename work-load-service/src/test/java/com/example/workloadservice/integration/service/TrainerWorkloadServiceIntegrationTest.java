@@ -45,10 +45,8 @@ public class TrainerWorkloadServiceIntegrationTest extends IntegrationTestBase {
 
     @Test
     public void testUpdateWorkload_trainerSavedInDatabase() {
-        // Act
         trainerWorkloadService.updateWorkload(workloadRequest);
 
-        // Assert
         TrainerWorkloadSummary workload = trainerWorkloadService.getWorkload("john.doe", LocalDate.now().getYear(), LocalDate.now().getMonthValue());
         assertNotNull(workload);
         assertEquals("John", workload.getFirstName());
@@ -57,13 +55,8 @@ public class TrainerWorkloadServiceIntegrationTest extends IntegrationTestBase {
 
     @Test
     public void testGetWorkload_success() {
-        // Arrange: создаем сводку для тренера
         trainerWorkloadService.updateWorkload(workloadRequest);
-
-        // Act
         TrainerWorkloadSummary workloadSummary = trainerWorkloadService.getWorkload("john.doe", LocalDate.now().getYear(), LocalDate.now().getMonthValue());
-
-        // Assert
         assertNotNull(workloadSummary);
         assertEquals("john.doe", workloadSummary.getUsername());
     }

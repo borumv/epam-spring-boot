@@ -36,16 +36,12 @@ public class TrainingServiceMapSteps {
 
     @Mock
     private TraineeRepository traineeRepository;
-
     @Mock
     private TrainerRepository trainerRepository;
-
     @Mock
     private TrainingTypeRepository trainingTypeRepository;
-
     @Mock
     private TrainingRepository trainingRepository;
-
     @Mock
     private TrainingMapper trainingMapper;
 
@@ -73,7 +69,7 @@ public class TrainingServiceMapSteps {
             trainingType = new TrainingType();
             trainingType.setName(TrainingType.Type.valueOf(type.toUpperCase()));
         } else {
-            trainingType = null; // Симуляция отсутствующего типа тренировки
+            trainingType = null;
         }
 
         trainingCreateDto = new TrainingCreateDto(
@@ -89,7 +85,6 @@ public class TrainingServiceMapSteps {
 
         Mockito.when(trainingMapper.toEntity(trainingCreateDto)).thenReturn(training);
     }
-
     @Given("a training create request with trainee {string}, trainer {string}, and training type {string}")
     public void aTrainingCreateRequest(String traineeUsername, String trainerUsername, String type) {
         setupTrainingCreateRequest(traineeUsername, trainerUsername, type, true);

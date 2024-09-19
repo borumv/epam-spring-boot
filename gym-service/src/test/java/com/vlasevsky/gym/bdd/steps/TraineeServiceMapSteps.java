@@ -50,20 +50,15 @@ public class TraineeServiceMapSteps {
     private TraineeMapper traineeMapper;
     @Mock
     private TrainerMapper trainerMapper;
-
     @InjectMocks
     private TraineeServiceMap traineeServiceMap;
-
     private Trainee trainee;
     private Set<Trainer> trainers;
     private TraineeProfileReadDto profileReadDto;
-
     public TraineeServiceMapSteps() {
         MockitoAnnotations.openMocks(this);
         initTestData();
     }
-
-    // Инициализация тестовых данных
     private void initTestData() {
         trainee = new Trainee();
         trainee.setId(1L);
@@ -83,7 +78,6 @@ public class TraineeServiceMapSteps {
         );
     }
 
-    // Вспомогательный метод для мокирования репозитория
     private void mockTraineeRepositoryFindByUsername(String username) {
         Mockito.when(traineeRepository.findByUsername(username)).thenReturn(Optional.of(trainee));
         Mockito.when(traineeMapper.toTraineeProfileDto(trainee)).thenReturn(profileReadDto);

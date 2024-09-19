@@ -34,39 +34,29 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
 public class TrainerServiceMapSteps {
-
     @Mock
     private TrainerRepository trainerRepository;
-
     @Mock
     private TrainingRepository trainingRepository;
-
     @Mock
     private TrainingTypeRepository trainingTypeRepository;
-
     @Mock
     private TrainerMapper trainerMapper;
-
     @Mock
     private TrainingMapper trainingMapper;
-
     @InjectMocks
     private TrainerServiceMap trainerServiceMap;
-
-    // Предварительно инициализированные объекты
     private Trainer trainer;
     private TrainerProfileReadDto trainerProfile;
     private TrainerCreateDto trainerCreateDto;
     private Set<Trainer> trainers;
     private Set<Training> trainings;
 
-    // Конструктор
     public TrainerServiceMapSteps() {
         MockitoAnnotations.openMocks(this);
         initTestData();
     }
 
-    // Инициализация объектов до выполнения тестов
     public void initTestData() {
         trainer = new Trainer();
         trainer.setId(1L);
@@ -97,7 +87,6 @@ public class TrainerServiceMapSteps {
     public void aTrainerExistsWithUsername(String username) {
         trainer.setUsername(username);
 
-        // Мокируем поведение репозитория и маппинга
         Mockito.when(trainerRepository.findByUsername(username)).thenReturn(Optional.of(trainer));
         Mockito.when(trainerMapper.toProfileDto(trainer)).thenReturn(trainerProfile);
     }
@@ -115,13 +104,11 @@ public class TrainerServiceMapSteps {
 
     @When("I update trainer {string} with first name {string}, last name {string}, and specializations {string}, {string}")
     public void updateTrainer(String username, String firstName, String lastName, String specialization1, String specialization2) {
-        // Преобразуем специализации в enum
         List<TrainingType.Type> specializationsEnum = Arrays.asList(
                 TrainingType.Type.valueOf(specialization1.toUpperCase()),
                 TrainingType.Type.valueOf(specialization2.toUpperCase())
         );
 
-        // Мокирование репозитория TrainingType
         Set<TrainingType> trainingTypes = new HashSet<>();
         specializationsEnum.forEach(type -> {
             TrainingType trainingType = new TrainingType();
@@ -130,7 +117,6 @@ public class TrainerServiceMapSteps {
         });
         Mockito.when(trainingTypeRepository.findByNames(specializationsEnum)).thenReturn(trainingTypes);
 
-        // Обновление тренера
         trainerCreateDto = new TrainerCreateDto(firstName, lastName, specializationsEnum, true);
         trainerServiceMap.update(username, trainerCreateDto);
     }
