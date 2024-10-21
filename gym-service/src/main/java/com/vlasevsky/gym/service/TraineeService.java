@@ -6,6 +6,7 @@ import com.vlasevsky.gym.model.Trainee;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 public interface TraineeService extends BaseService<Trainee, Long> {
 
@@ -18,7 +19,7 @@ public interface TraineeService extends BaseService<Trainee, Long> {
 
     void changeActiveStatus(String username, StatusUpdateDto statusUpdateDto);
 
-    List<TrainingReadDto> getTraineeTrainings(String username, LocalDateTime from, LocalDateTime to, String trainerName);
+    Set<TrainingReadDto> getTraineeTrainings(String username, LocalDateTime from, LocalDateTime to, String trainerName);
 
     TraineeProfileReadDto updateTraineeTrainers(String username, List<String> trainers);
 }

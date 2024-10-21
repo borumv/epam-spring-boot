@@ -6,18 +6,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 public interface TrainerService extends BaseService<Trainer, Long>{
     TrainerProfileReadDto findTrainerByUsername(String username);
 
     TrainerProfileReadDto update(String username, TrainerCreateDto dto);
 
-    List<TrainerReadDto> findAll();
+    Set<TrainerReadDto> findAll();
     void changeActiveStatus(String username, StatusUpdateDto dto);
 
-    List<TrainingReadDto> getTrainerTrainings(String username, LocalDateTime from, LocalDateTime to, String traineeName);
+    Set<TrainingReadDto> getTrainerTrainings(String username, LocalDateTime from, LocalDateTime to, String traineeName);
 
-    List<TrainerReadDto> getTrainersNotAssignedToTrainee(String traineeUsername);
+    Set<TrainerReadDto> getTrainersNotAssignedToTrainee(String traineeUsername);
 
     void updateTrainerWorkload(TrainerWorkloadRequest request);
 

@@ -32,6 +32,8 @@ public class AuthenticationServiceMap implements AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
+    private final ReportSenderService reportSenderService;
+
     @Transactional
     public String generateUsername(String firstName, String lastName) {
         log.info("Generating username for {} {}", firstName, lastName);
@@ -78,6 +80,7 @@ public class AuthenticationServiceMap implements AuthenticationService {
         userRepository.save(user);
         String token = jwtService.generateToken(user);
         log.info("Trainee registered successfully: {}", user.getUsername());
+        reportSenderService.sendReport("Trainee registered successfully: " + user.getUsername());
         return RegistrationResponse.builder()
                 .token(token)
                 .password(password)
@@ -98,6 +101,7 @@ public class AuthenticationServiceMap implements AuthenticationService {
         userRepository.save(user);
         String token = jwtService.generateToken(user);
         log.info("Trainer registered successfully: {}", user.getUsername());
+        reportSenderService.sendReport("Trainer registered successfully: " + user.getUsername());
         return RegistrationResponse.builder()
                 .token(token)
                 .password(password)

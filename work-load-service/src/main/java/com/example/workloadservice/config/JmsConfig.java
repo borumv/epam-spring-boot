@@ -47,7 +47,7 @@ public class JmsConfig {
     public ActiveMQConnectionFactory connectionFactory() {
         ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory();
         factory.setTrustAllPackages(true);
-        factory.setBrokerURL("tcp://localhost:61616");
+        factory.setBrokerURL("tcp://activemq:61616");
         return factory;
     }
 

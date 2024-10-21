@@ -23,12 +23,12 @@ CREATE TABLE trainees (
                           id BIGINT PRIMARY KEY,
                           date_of_birth DATE,
                           address VARCHAR(255),
-                          FOREIGN KEY (id) REFERENCES users(id)
+                          FOREIGN KEY (id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE trainers (
                           id BIGINT PRIMARY KEY,
-                          FOREIGN KEY (id) REFERENCES users(id)
+                          FOREIGN KEY (id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE training_types (
@@ -44,8 +44,8 @@ CREATE TABLE training (
                           trainee_id BIGINT,
                           trainer_id BIGINT,
                           training_type_id INT,
-                          FOREIGN KEY (trainee_id) REFERENCES trainees(id),
-                          FOREIGN KEY (trainer_id) REFERENCES trainers(id),
+                          FOREIGN KEY (trainee_id) REFERENCES trainees(id) ON DELETE CASCADE,
+                          FOREIGN KEY (trainer_id) REFERENCES trainers(id) ON DELETE CASCADE,
                           FOREIGN KEY (training_type_id) REFERENCES training_types(id)
 );
 
@@ -53,14 +53,14 @@ CREATE TABLE trainee_trainer (
                                  trainee_id BIGINT,
                                  trainer_id BIGINT,
                                  PRIMARY KEY (trainee_id, trainer_id),
-                                 FOREIGN KEY (trainee_id) REFERENCES trainees(id),
-                                 FOREIGN KEY (trainer_id) REFERENCES trainers(id)
+                                 FOREIGN KEY (trainee_id) REFERENCES trainees(id) ON DELETE CASCADE,
+                                 FOREIGN KEY (trainer_id) REFERENCES trainers(id) ON DELETE CASCADE
 );
 
 CREATE TABLE trainer_training_type (
                                        trainer_id BIGINT,
                                        training_type_id INT,
                                        PRIMARY KEY (trainer_id, training_type_id),
-                                       FOREIGN KEY (trainer_id) REFERENCES trainers(id),
+                                       FOREIGN KEY (trainer_id) REFERENCES trainers(id) ON DELETE CASCADE,
                                        FOREIGN KEY (training_type_id) REFERENCES training_types(id)
 );

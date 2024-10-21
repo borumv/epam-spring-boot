@@ -12,6 +12,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
@@ -26,7 +27,7 @@ public interface TrainerMapper {
 
 
     @Named("trainingTypeToType")
-    static List<TrainingType.Type> mapSpecializations(List<TrainingType> specializations) {
+    static List<TrainingType.Type> mapSpecializations(Set<TrainingType> specializations) {
         if (specializations == null) return null;
         return specializations.stream()
                 .map(TrainingType::getName)
@@ -36,6 +37,6 @@ public interface TrainerMapper {
     Trainer toEntity(TrainerCreateDto dto);
     Trainer toEntity(TrainerRegistrationDto dto);
 
-    List<TrainerReadDto> toDTOList(List<Trainer> trainers);
-    List<TrainerProfileReadDto> toDTOProfileList(List<Training> trainings);
+    Set<TrainerReadDto> toDTOList(Set<Trainer> trainers);
+    Set<TrainerProfileReadDto> toDTOProfileList(Set<Training> trainings);
 }

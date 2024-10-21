@@ -3,6 +3,7 @@ package com.vlasevsky.gym.controller;
 import com.vlasevsky.gym.dto.*;
 import com.vlasevsky.gym.service.AuthenticationService;
 import com.vlasevsky.gym.service.TrainerService;
+import com.vlasevsky.gym.service.map.ReportSenderService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/trainers")
@@ -22,10 +24,11 @@ public class TrainerController {
     @Autowired
     private TrainerService trainerService;
 
+
     private AuthenticationService authenticationService;
 
     @GetMapping
-    public List<TrainerReadDto> getTrainers(@RequestParam(required = false) String unassignedTraineeUsername) {
+    public Set<TrainerReadDto> getTrainers(@RequestParam(required = false) String unassignedTraineeUsername) {
         if (unassignedTraineeUsername != null) {
             return trainerService.getTrainersNotAssignedToTrainee(unassignedTraineeUsername);
         }

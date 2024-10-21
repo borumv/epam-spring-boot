@@ -7,11 +7,12 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface TrainingTypeRepository extends JpaRepository<TrainingType, Long> {
 
     Optional<TrainingType> findByName(TrainingType.Type name);
 
     @Query("SELECT t FROM TrainingType t WHERE t.name IN :types")
-    List<TrainingType> findByNames(@Param("types") List<TrainingType.Type> types);
+    Set<TrainingType> findByNames(@Param("types") List<TrainingType.Type> types);
 }

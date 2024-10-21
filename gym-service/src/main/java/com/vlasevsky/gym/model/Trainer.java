@@ -2,8 +2,10 @@ package com.vlasevsky.gym.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -20,20 +22,22 @@ public class Trainer extends User {
             joinColumns = @JoinColumn(name = "trainer_id"),
             inverseJoinColumns = @JoinColumn(name = "training_type_id")
     )
-    private List<TrainingType> specializations;
+    private Set<TrainingType> specializations = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinTable(
             name = "trainee_trainer",
             joinColumns = @JoinColumn(name = "trainer_id"),
             inverseJoinColumns = @JoinColumn(name = "trainee_id")
     )
     @ToString.Exclude
-    private Set<Trainee> trainees;
+    @EqualsAndHashCode.Exclude
+    private Set<Trainee> trainees = new HashSet<>();
 
     @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "trainer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    private Set<Training> trainings;
+    private Set<Training> trainings = new HashSet<>();
 
 
 }

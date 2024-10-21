@@ -3,6 +3,8 @@ package com.vlasevsky.gym.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.Date;
 
@@ -23,6 +25,7 @@ public class Training implements BaseEntity<Long>{
     @ManyToOne
     @JoinColumn(name = "trainee_id")
     @ToString.Exclude
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Trainee trainee;
     @ManyToOne
     @JoinColumn(name = "trainer_id")

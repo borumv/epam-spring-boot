@@ -19,7 +19,9 @@ public class TrainingType implements BaseEntity<Long> {
 
     public enum Type {
         CARDIO,
-        STRENGTH_TRAINING
+        STRENGTH_TRAINING,
+        YOGA,
+        PILATES
     }
 
 }

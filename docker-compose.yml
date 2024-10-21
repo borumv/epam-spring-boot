@@ -1,0 +1,101 @@
+version: '3'
+services:
+  registry-service:
+    image: registry-service
+    container_name: registry-service
+    build:
+      context: ./registry-service
+    ports:
+      - "8761:8761"
+    networks:
+      - gym-network
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:8761/ || exit 1" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  gym-service:
+    image: gym-service
+    container_name: gym-service
+    build:
+      context: ./gym-service
+    ports:
+      - "8080:8080"
+    environment:
+      - EUREKA_SERVER_URL=http://registry-service:8761/eureka
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/your_database_name
+      - SPRING_DATASOURCE_USERNAME=your_username
+      - SPRING_DATASOURCE_PASSWORD=your_password
+    depends_on:
+      - registry-service
+      - postgres
+    networks:
+      - gym-network
+
+  work-load-service:
+    image: work-load-service
+    container_name: workload-service
+    build:
+      context: ./work-load-service
+    ports:
+      - "8081:8081"
+    environment:
+      - EUREKA_SERVER_URL=http://registry-service:8761/eureka
+      - MONGODB_URI=mongodb://mongo:27017/workloaddb
+      - JMS_BROKER_URL=tcp://activemq:61616
+    depends_on:
+      - registry-service
+      - mongo
+      - activemq
+    networks:
+      - gym-network
+  mongo:
+    image: mongo:4.4
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    networks:
+      - gym-network
+
+  postgres:
+    image: postgres:14
+    container_name: postgres
+    environment:
+      POSTGRES_USER: your_username
+      POSTGRES_PASSWORD: your_password
+      POSTGRES_DB: your_database_name
+    ports:
+      - "5432:5432"
+    networks:
+      - gym-network
+
+  activemq:
+    image: rmohr/activemq
+    container_name: activemq
+    ports:
+      - "61616:61616"
+      - "8161:8161"  # Web интерфейс ActiveMQ доступен на порту 8161
+    networks:
+      - gym-network
+
+  report-service:
+    image: report-service
+    container_name: report-service
+    build:
+      context: ./report-service
+    ports:
+      - "8082:8082"
+    environment:
+      - EUREKA_SERVER_URL=http://registry-service:8761/eureka
+      - MONGODB_URI=mongodb://mongo:27017/reportdb
+      - JMS_BROKER_URL=tcp://activemq:61616
+    depends_on:
+      - registry-service
+      - mongo
+      - activemq
+    networks:
+      - gym-network
+networks:
+  gym-network:
+    driver: bridge

@@ -14,12 +14,8 @@ import java.util.List;
 public interface TrainerWorkloadSummaryMapper {
     TrainerWorkloadSummaryMapper INSTANCE = Mappers.getMapper(TrainerWorkloadSummaryMapper.class);
 
-
-    @Mapping(target = "yearlySummaries", source = "yearlySummaries")
     TrainerWorkloadSummaryDTO toDTO(TrainerWorkloadSummary summary);
 
-    @Mapping(target = "trainingYear", source = "trainingYear")
-    @Mapping(target = "monthlySummary", source = "monthlySummary")
     YearlyTrainingSummaryDTO toDTO(YearlyTrainingSummary yearlySummary);
 
     List<TrainerWorkloadSummaryDTO> toDTOList(List<TrainerWorkloadSummary> summaries);
