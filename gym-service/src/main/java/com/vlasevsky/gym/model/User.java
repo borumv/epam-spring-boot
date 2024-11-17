@@ -1,6 +1,5 @@
 package com.vlasevsky.gym.model;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,32 +14,32 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "users")
-@Entity
-@Inheritance(strategy = InheritanceType.JOINED)
+//@Table(name = "users")
+//@Entity
+//@Inheritance(strategy = InheritanceType.JOINED)
 public class User implements BaseEntity<Long>, UserDetails {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@Id
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "first_name")
+   // @Column(name = "first_name")
     private String firstName;
-    @Column(name = "last_name")
+    //@Column(name = "last_name")
     private String lastName;
-    @Column(name = "username", unique = true)
+   // @Column(name = "username", unique = true)
     private String username;
-    @Column(name = "password")
+    //@Column(name = "password")
     private String password;
-    @Column(name = "is_active")
+   // @Column(name = "is_active")
     private Boolean isActive =Boolean.TRUE;
-    @Enumerated(EnumType.STRING)
-    @Column(name = "role")
+    //@Enumerated(EnumType.STRING)
+    //@Column(name = "role")
     private Role role;
-    @Column(name = "account_non_locked")
+    //@Column(name = "account_non_locked")
     private boolean accountNonLocked = Boolean.TRUE;
-    @Column(name = "failed_attempt")
+    //@Column(name = "failed_attempt")
     private int failedAttempt;
-    @Column(name = "lock_time")
+    //@Column(name = "lock_time")
     private LocalDate lockTime;
 
     @Override

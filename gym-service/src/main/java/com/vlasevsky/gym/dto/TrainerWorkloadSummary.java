@@ -1,6 +1,5 @@
 package com.vlasevsky.gym.dto;
 
-import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.List;

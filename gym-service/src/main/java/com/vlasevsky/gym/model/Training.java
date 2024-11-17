@@ -1,38 +1,35 @@
 package com.vlasevsky.gym.model;
 
-import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.Date;
 
 @Data
-@Entity
-@Table(name = "training")
+//@Entity
+//@Table(name = "training")
 public class Training implements BaseEntity<Long>{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+   // @Id
+   // @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "name")
+  //  @Column(name = "name")
     private String name;
-    @Column(name = "date")
+   // @Column(name = "date")
     private Date date;
-    @Column(name = "duration")
+  //  @Column(name = "duration")
     private int duration;
-    @ManyToOne
-    @JoinColumn(name = "trainee_id")
+    //@ManyToOne
+   // @JoinColumn(name = "trainee_id")
     @ToString.Exclude
-    @OnDelete(action = OnDeleteAction.CASCADE)
+   // @OnDelete(action = OnDeleteAction.CASCADE)
     private Trainee trainee;
-    @ManyToOne
-    @JoinColumn(name = "trainer_id")
+   // @ManyToOne
+    //@JoinColumn(name = "trainer_id")
     @ToString.Exclude
     private Trainer trainer;
-    @Enumerated(EnumType.STRING)
-    @ManyToOne
-    @JoinColumn(name = "training_type_id")
+   // @Enumerated(EnumType.STRING)
+    //@ManyToOne
+    //@JoinColumn(name = "training_type_id")
     private TrainingType trainingType;
 }

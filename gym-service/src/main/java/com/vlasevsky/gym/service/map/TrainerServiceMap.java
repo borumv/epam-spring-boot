@@ -17,8 +17,6 @@ import com.vlasevsky.gym.repository.TrainingTypeRepository;
 import com.vlasevsky.gym.service.TrainerService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,10 +38,10 @@ public class TrainerServiceMap implements TrainerService {
     private final TraineeMapper traineeMapper;
     private final TrainingMapper trainingMapper;
 
-    private final WorkLoadClient workLoadClient;
+    //private final WorkLoadClient workLoadClient;
 
 
-    private JmsTemplate jmsTemplate;
+//    private JmsTemplate jmsTemplate;
     @Transactional
     @Override
     public TrainerProfileReadDto findTrainerByUsername(String username) {
@@ -142,7 +140,7 @@ public class TrainerServiceMap implements TrainerService {
                     log.warn("Trainer not found with username: {}", username);
                     return new TrainerNotFoundException(username);
                 });
-        jmsTemplate.convertAndSend(JmsConstants.WORKLOAD_QUEUE, request);
+//        jmsTemplate.convertAndSend(JmsConstants.WORKLOAD_QUEUE, request);
     }
 
     public TrainerWorkloadSummary getTrainerWorkload(String username, int year, int month) {
@@ -151,6 +149,7 @@ public class TrainerServiceMap implements TrainerService {
                     log.warn("Trainer not found with username: {}", username);
                     return new TrainerNotFoundException(username);
                 });
-        return workLoadClient.getWorkload(username, year, month).getBody();
+        //return workLoadClient.getWorkload(username, year, month).getBody();
+        return null;
     }
 }
