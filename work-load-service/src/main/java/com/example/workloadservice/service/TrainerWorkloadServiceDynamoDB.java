@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class TrainerWorkloadServiceMap implements TrainerWorkloadService {
+public class TrainerWorkloadServiceDynamoDB implements TrainerWorkloadService {
 
     @Autowired
     private TrainerWorkloadRepository repository;
@@ -46,21 +46,20 @@ public class TrainerWorkloadServiceMap implements TrainerWorkloadService {
     public TrainerWorkloadSummary getWorkload(String username, int year, int month) {
         log.info("Retrieving workload summary for trainer: {} for year: {} and month: {}", username, year, month);
 
-        TrainerWorkloadSummary summary = repository.findByUsername(username)
-                .orElseThrow(() -> new TrainerWorkloadNotFoundException(username));
+        TrainerWorkloadSummary summary = repository.findByUsername(username);
 
         YearlyTrainingSummary yearlySummary = getYearlySummary(summary, username, year);
 
-        // Возвращаем сводку за год или за конкретный месяц
         return (month == 0) ?
                 createSummary(summary, yearlySummary, year, null) :
                 createSummary(summary, yearlySummary, year, month);
     }
 
     private TrainerWorkloadSummary getOrCreateTrainerSummary(TrainerWorkloadRequest request) {
-        TrainerWorkloadSummary summary = repository.findByUsername(request.getUsername()).orElse(null);
-
-        if (summary == null) {
+        TrainerWorkloadSummary summary;
+        try {
+            summary = repository.findByUsername(request.getUsername());
+        } catch (TrainerWorkloadNotFoundException e) {
             log.info("TransactionId: {} - No existing summary found for trainer: {}. Creating new summary.", request.getTransactionId(), request.getUsername());
             summary = new TrainerWorkloadSummary();
             summary.setUsername(request.getUsername());
@@ -69,7 +68,6 @@ public class TrainerWorkloadServiceMap implements TrainerWorkloadService {
             summary.setIsActive(request.getIsActive());
             summary.setYearlySummaries(new ArrayList<>());
         }
-
         return summary;
     }
 
@@ -161,7 +159,6 @@ public class TrainerWorkloadServiceMap implements TrainerWorkloadService {
 
     private TrainerWorkloadSummary createBaseSummary(TrainerWorkloadSummary summary) {
         TrainerWorkloadSummary baseSummary = new TrainerWorkloadSummary();
-        baseSummary.setId(summary.getId());
         baseSummary.setUsername(summary.getUsername());
         baseSummary.setFirstName(summary.getFirstName());
         baseSummary.setLastName(summary.getLastName());

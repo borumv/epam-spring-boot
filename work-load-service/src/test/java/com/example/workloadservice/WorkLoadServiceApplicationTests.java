@@ -1,10 +1,11 @@
-package com.example.workloadservice.service;
+package com.example.workloadservice;
 
 import com.example.workloadservice.dto.TrainerWorkloadRequest;
 import com.example.workloadservice.exception.TrainerWorkloadNotFoundException;
 import com.example.workloadservice.model.TrainerWorkloadSummary;
 import com.example.workloadservice.model.YearlyTrainingSummary;
 import com.example.workloadservice.repository.TrainerWorkloadRepository;
+import com.example.workloadservice.service.TrainerWorkloadService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,7 +26,7 @@ import static org.mockito.Mockito.*;
 class TrainerWorkloadServiceMapTest {
 
 	@InjectMocks
-	private TrainerWorkloadServiceMap trainerWorkloadServiceMap;
+	private TrainerWorkloadService trainerWorkloadServiceMap;
 
 	@Mock
 	private TrainerWorkloadRepository repository;
@@ -35,7 +36,7 @@ class TrainerWorkloadServiceMapTest {
 		TrainerWorkloadRequest request = createWorkloadRequest(TrainerWorkloadRequest.ActionType.ADD, 5);
 
 		// Mock поведения репозитория
-		when(repository.findByUsername(anyString())).thenReturn(Optional.empty());
+	//	when(repository.findByUsername(anyString())).thenReturn(Optional.empty());
 
 		trainerWorkloadServiceMap.updateWorkload(request);
 
@@ -45,7 +46,7 @@ class TrainerWorkloadServiceMapTest {
 
 	@Test
 	void testGetWorkload_NotFound() {
-		when(repository.findByUsername(anyString())).thenReturn(Optional.empty());
+	//	when(repository.findByUsername(anyString())).thenReturn(Optional.empty());
 
 		assertThrows(TrainerWorkloadNotFoundException.class, () -> {
 			trainerWorkloadServiceMap.getWorkload("nonexistent.user", 2024, 6);
@@ -55,7 +56,7 @@ class TrainerWorkloadServiceMapTest {
 	@Test
 	void testGetWorkload_Success() {
 		TrainerWorkloadSummary existingSummary = createExistingTrainerSummary(null);
-		when(repository.findByUsername(anyString())).thenReturn(Optional.of(existingSummary));
+		//when(repository.findByUsername(anyString())).thenReturn(Optional.of(existingSummary));
 
 		TrainerWorkloadSummary result = trainerWorkloadServiceMap.getWorkload("existing.user", 2024, 6);
 

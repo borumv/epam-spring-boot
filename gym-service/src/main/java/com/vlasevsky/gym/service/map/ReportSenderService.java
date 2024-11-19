@@ -1,6 +1,9 @@
 package com.vlasevsky.gym.service.map;
 
 import com.example.common.dto.ReportDTO;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vlasevsky.gym.dto.TrainerWorkloadRequest;
 import io.awspring.cloud.sqs.operations.SqsTemplate;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,15 +22,17 @@ public class ReportSenderService {
     @Value("${cloud.aws.sqs.queue.url}")
     private String queueURL;
 
-    @Autowired
     private final SqsClient sqsClient;
 
+    private final ObjectMapper objectMapper;
 
     @Autowired
-    public ReportSenderService(@Value("${cloud.aws.sqs.queue.url}") String queueURL, SqsClient sqsClient) {
+    public ReportSenderService(@Value("${cloud.aws.sqs.queue.url}") String queueURL, SqsClient sqsClient, ObjectMapper objectMapper) {
         this.queueURL = queueURL;
         this.sqsClient = sqsClient;
+        this.objectMapper = objectMapper;
     }
+
 
     public void sendReport(String content) {
         ReportDTO reportDTO = new ReportDTO();
@@ -40,5 +45,21 @@ public class ReportSenderService {
         //  sqsTemplate.send("Gym-Queue", reportDTO);
 
         log.info("Message sent successfully. MessageId: {}", response.messageId());
+    }
+
+    public void sendTrainerWorkloadRequest(TrainerWorkloadRequest request) {
+        log.info("Sending workload request: {}", request);
+        try {
+            // Сериализация объекта в JSON строку
+            String messageBody = objectMapper.writeValueAsString(request);
+            SendMessageRequest sendMsgRequest = SendMessageRequest.builder()
+                    .queueUrl(queueURL)
+                    .messageBody(messageBody)
+                    .build();
+            var response = sqsClient.sendMessage(sendMsgRequest);
+            log.info("Message sent successfully. MessageId: {}", response.messageId());
+        } catch (JsonProcessingException e) {
+            log.error("Failed to serialize TrainerWorkloadRequest", e);
+        }
     }
 }

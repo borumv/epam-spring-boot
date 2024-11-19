@@ -134,6 +134,7 @@ public class TrainerServiceMap implements TrainerService {
     }
 
     public void updateTrainerWorkload(TrainerWorkloadRequest request) {
+        log.info("updateTrainerWorkload() request: {}", request);
         String username = request.getUsername();
         trainerRepository.findByUsername(username)
                 .orElseThrow(() -> {
@@ -141,9 +142,8 @@ public class TrainerServiceMap implements TrainerService {
                     return new TrainerNotFoundException(username);
                 });
         log.info("Send workload");
-        // jmsTemplate.convertAndSend(JmsConstants.WORKLOAD_QUEUE, request);
+        reportSenderService.sendTrainerWorkloadRequest(request);
     }
-
     public TrainerWorkloadSummary getTrainerWorkload(String username, int year, int month) {
         trainerRepository.findByUsername(username)
                 .orElseThrow(() -> {

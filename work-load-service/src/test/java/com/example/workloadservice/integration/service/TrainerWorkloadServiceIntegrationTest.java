@@ -5,16 +5,13 @@ import com.example.workloadservice.integration.IntegrationTestBase;
 import com.example.workloadservice.integration.annotation.IT;
 import com.example.workloadservice.model.TrainerWorkloadSummary;
 import com.example.workloadservice.repository.TrainerWorkloadRepository;
-import com.example.workloadservice.service.TrainerWorkloadServiceMap;
-import org.junit.jupiter.api.Assertions;
+import com.example.workloadservice.service.TrainerWorkloadService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -22,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class TrainerWorkloadServiceIntegrationTest extends IntegrationTestBase {
 
     @Autowired
-    private TrainerWorkloadServiceMap trainerWorkloadService;
+    private TrainerWorkloadService trainerWorkloadService;
 
     @Autowired
     private TrainerWorkloadRepository trainerWorkloadRepository;
