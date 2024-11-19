@@ -1,10 +1,7 @@
 package com.vlasevsky.gym.service.map;
 
-import com.vlasevsky.gym.config.JmsConstants;
 import com.vlasevsky.gym.dto.*;
-import com.vlasevsky.gym.exceptions.AuthenticationException;
 import com.vlasevsky.gym.exceptions.TrainerNotFoundException;
-import com.vlasevsky.gym.feign.WorkLoadClient;
 import com.vlasevsky.gym.mapstruct.TraineeMapper;
 import com.vlasevsky.gym.mapstruct.TrainerMapper;
 import com.vlasevsky.gym.mapstruct.TrainingMapper;
@@ -17,8 +14,6 @@ import com.vlasevsky.gym.repository.TrainingTypeRepository;
 import com.vlasevsky.gym.service.TrainerService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,10 +35,12 @@ public class TrainerServiceMap implements TrainerService {
     private final TraineeMapper traineeMapper;
     private final TrainingMapper trainingMapper;
 
-    private final WorkLoadClient workLoadClient;
+    private final ReportSenderService reportSenderService;
+
+    //private final WorkLoadClient workLoadClient;
 
 
-    private JmsTemplate jmsTemplate;
+    //    private JmsTemplate jmsTemplate;
     @Transactional
     @Override
     public TrainerProfileReadDto findTrainerByUsername(String username) {
@@ -98,6 +95,7 @@ public class TrainerServiceMap implements TrainerService {
         List<Trainer> trainers = trainerRepository.findAll();
         Set<TrainerReadDto> trainerDtos = trainerMapper.toDTOList(Set.copyOf(trainers));
         log.info("Found {} trainers", trainerDtos.size());
+        reportSenderService.sendReport("Find all trainers command was successfully: " + trainerDtos);
         return trainerDtos;
     }
 
@@ -142,7 +140,8 @@ public class TrainerServiceMap implements TrainerService {
                     log.warn("Trainer not found with username: {}", username);
                     return new TrainerNotFoundException(username);
                 });
-        jmsTemplate.convertAndSend(JmsConstants.WORKLOAD_QUEUE, request);
+        log.info("Send workload");
+        // jmsTemplate.convertAndSend(JmsConstants.WORKLOAD_QUEUE, request);
     }
 
     public TrainerWorkloadSummary getTrainerWorkload(String username, int year, int month) {
@@ -151,6 +150,7 @@ public class TrainerServiceMap implements TrainerService {
                     log.warn("Trainer not found with username: {}", username);
                     return new TrainerNotFoundException(username);
                 });
-        return workLoadClient.getWorkload(username, year, month).getBody();
+       // return workLoadClient.getWorkload(username, year, month).getBody();
+        return null;
     }
 }

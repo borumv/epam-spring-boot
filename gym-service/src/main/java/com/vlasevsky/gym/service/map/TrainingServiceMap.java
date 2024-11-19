@@ -1,8 +1,6 @@
 package com.vlasevsky.gym.service.map;
 
-import com.vlasevsky.gym.dto.CredentialsDto;
 import com.vlasevsky.gym.dto.TrainingCreateDto;
-import com.vlasevsky.gym.exceptions.AuthenticationException;
 import com.vlasevsky.gym.exceptions.TraineeNotFoundException;
 import com.vlasevsky.gym.exceptions.TrainerNotFoundException;
 import com.vlasevsky.gym.exceptions.TrainingTypeNotFoundException;
@@ -22,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
-import java.util.Optional;
 
 @Slf4j
 @Service

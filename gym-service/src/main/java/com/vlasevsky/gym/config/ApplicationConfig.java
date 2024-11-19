@@ -1,30 +1,47 @@
 package com.vlasevsky.gym.config;
 
-import com.vlasevsky.gym.repository.UserRepository;
+
+import io.awspring.cloud.sqs.operations.SqsTemplate;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.sqs.SqsAsyncClient;
 
 @Configuration
 @RequiredArgsConstructor
+
 public class ApplicationConfig {
     private final UserDetailsService userDetailsService;
+
+    @Bean
+    public SqsAsyncClient sqsAsyncClient() {
+        return SqsAsyncClient.builder()
+                .region(Region.US_EAST_1)
+                .credentialsProvider(DefaultCredentialsProvider.create())
+                .build();
+    }
+
+    @Bean
+    public SqsTemplate sqsTemplate(SqsAsyncClient sqsAsyncClient) {
+        return SqsTemplate.builder()
+                .sqsAsyncClient(sqsAsyncClient)
+                .build();
+    }
     @Bean
     public AuthenticationProvider authenticationProvider(){
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
