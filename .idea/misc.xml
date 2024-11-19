@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="FrameworkDetectionExcludesConfiguration">
+    <file type="web" url="file://$PROJECT_DIR$/csv-report-lambda" />
+  </component>
   <component name="MavenProjectsManager">
     <option name="originalFiles">
       <list>
@@ -10,6 +13,7 @@
         <option value="$PROJECT_DIR$/work-load-service/pom.xml" />
         <option value="$PROJECT_DIR$/report-service/pom.xml" />
         <option value="$PROJECT_DIR$/common-dto/pom.xml" />
+        <option value="$PROJECT_DIR$/csv-report-lambda/pom.xml" />
       </list>
     </option>
   </component>
