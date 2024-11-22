@@ -120,7 +120,7 @@ public class CSVReportLambdaHandler implements RequestHandler<Object, String> {
                 try {
                     csvPrinter.printRecord(trainerData.getFirstName(), trainerData.getLastName(), trainerData.getCurrentMonthDuration());
                 } catch (Exception e) {
-                    context.getLogger().log("Ошибка при записи данных тренера " + trainerData.getFirstName() + " " + trainerData.getLastName() + ": " + e.getMessage());
+                    context.getLogger().log("Error when trying to save trainer data " + trainerData.getFirstName() + " " + trainerData.getLastName() + ": " + e.getMessage());
                 }
             });
 
